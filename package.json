@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "name": "zarr-convention-metadata-template",
+  "version": "0.1.0",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.12.0"
+  }
+}

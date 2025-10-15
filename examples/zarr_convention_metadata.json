@@ -1,0 +1,17 @@
+{"f010a634-3525-416e-9320-8f44b5bc352c": {
+"version": "0.1.0",
+"schema": "https://raw.githubusercontent.com/zarr-conventions/template/refs/tags/v0.1.0/schema.json",
+"name": "Template",
+"description": "Template convention for demonstrating Zarr convention metadata structure",
+"spec": "https://github.com/zarr-conventions/template/blob/v0.1.0/README.md",
+"configuration": {
+    "new_field": "example value",
+    "xyz": {
+    "x": 1.0,
+    "y": 2.0,
+    "z": 3.0
+    },
+    "another_one": [1, 2, 3, 4, 5]
+}
+}
+}
