@@ -15,6 +15,7 @@ This specification defines a JSON object that encodes multiscale pyramid informa
 - Examples:
     - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
     - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
+    - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
 
 ## Motivation
 
@@ -151,6 +152,7 @@ See the [examples](examples/) directory for complete Zarr convention metadata ex
 
 - [power-of-2-pyramid.json](examples/power-of-2-pyramid.json) - Simple power-of-2 pyramid with 3 resolution levels
 - [custom-pyramid-levels.json](examples/custom-pyramid-levels.json) - Custom pyramid levels with named groups
+- [sentinel-2-multiresolution.json](examples/sentinel-2-multiresolution.json) - Sentinel-2 multi-resolution layout with native resolution bands at 10m, 20m, and 60m
 
 ## Composition with Domain-Specific Metadata
 
