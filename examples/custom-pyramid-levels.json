@@ -1,0 +1,32 @@
+{
+    "f010a634-3525-416e-9320-8f44b5bc352c": {
+        "version": "0.1.0",
+        "schema": "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json",
+        "name": "Multiscales Attribute Extension",
+        "description": "Custom pyramid levels with named groups",
+        "spec": "https://github.com/zarr-experimental/multiscales/blob/v0.1.0/README.md",
+        "configuration": {
+            "version": "0.1.0",
+            "layout": [
+                {
+                    "group": "full"
+                },
+                {
+                    "group": "half",
+                    "from_group": "full",
+                    "scale": [2.0, 2.0]
+                },
+                {
+                    "group": "quarter",
+                    "from_group": "half",
+                    "scale": [4.0, 4.0]
+                },
+                {
+                    "group": "eighth",
+                    "from_group": "quarter",
+                    "scale": [8.0, 8.0]
+                }
+            ]
+        }
+    }
+}

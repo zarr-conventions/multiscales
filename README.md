@@ -2,15 +2,19 @@
 
 - **UUID**: f010a634-3525-416e-9320-8f44b5bc352c
 - **Name**: Multiscales Attribute Extension
-- **Version**: 0.1.0
 - **Schema**: "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json"
 - **Extension Maturity Classification**: Proposal
 - **Owner**: @emmanuelmathot, @maxrjones
+- **Version** 0.1.0
+
+
+## Description
 
 This specification defines a JSON object that encodes multiscale pyramid information for data stored in Zarr groups under the `multiscales` key in the attributes of Zarr groups. This is a domain-agnostic specification that describes the hierarchical layout of Zarr groups representing different resolution levels and the transformations between them.
 
 - Examples:
-    - [Simple Power-of-2 Pyramid](examples/zarr_convention_metadata.json)
+    - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
+    - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
 
 ## Motivation
 
@@ -40,28 +44,30 @@ The configuration in the Zarr convention metadata can be used in these parts of 
 - [x] Group
 - [ ] Array
 
-| Field Name        | Type     | Description                                      | Required |
-| ----------------- | -------- | ------------------------------------------------ | -------- |
-| version           | string   | Multiscales metadata version                     | ✓ Yes    |
-| layout            | [object] | Array of objects representing the pyramid layout | ✓ Yes    |
-| resampling_method | string   | Resampling method used for downsampling          | No       |
+|   |Type|Description|Required|Reference|
+|---|---|---|---|---|
+|**version**|`string`|Multiscales metadata version|&#10003; Yes|[version](#version)|
+|**layout**|`object[]`|Array of objects representing the pyramid layout|&#10003; Yes|[layout](#layout)|
+|**resampling_method**|`string`|Resampling method used for downsampling|No|[resampling_method](#resampling_method)|
 
-### Additional Field Information
+### Field Details
+
+Additional properties are allowed.
 
 #### version
 
 Multiscales metadata version
 
 * **Type**: `string`
-* **Required**: ✓ Yes
-* **Allowed values**: `0.1.0`
+* **Required**: &#10003; Yes
+* **Pattern**: `^0\.1\.0$`
 
 #### layout
 
 Array of objects representing the pyramid layout and transformation relationships
 
-* **Type**: array of `object`
-* **Required**: Yes
+* **Type**: `object[]`
+* **Required**: &#10003; Yes
 
 This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level, ordered from highest to lowest resolution. Each object contains:
 
@@ -141,75 +147,10 @@ The multiscales metadata enables complete discovery of the multiscale collection
 
 ## Examples
 
-### Example 1: Simple Power-of-2 Pyramid
+See the [examples](examples/) directory for complete Zarr convention metadata examples:
 
-```json
-{
-  "zarr_format": 3,
-  "node_type": "group",
-  "attributes": {
-    "multiscales": {
-      "version": "0.1.0",
-      "layout": [
-        {
-          "group": "0"
-        },
-        {
-          "group": "1",
-          "from_group": "0",
-          "factors": [2, 2],
-          "scale": [2.0, 2.0],
-          "translation": [0.0, 0.0],
-          "resampling_method": "average"
-        },
-        {
-          "group": "2",
-          "from_group": "1",
-          "factors": [2, 2],
-          "scale": [4.0, 4.0],
-          "translation": [0.0, 0.0],
-          "resampling_method": "average"
-        }
-      ],
-      "resampling_method": "average"
-    }
-  }
-}
-```
-
-### Example 2: Custom Pyramid Levels
-
-```json
-{
-  "zarr_format": 3,
-  "node_type": "group",
-  "attributes": {
-    "multiscales": {
-      "version": "0.1.0",
-      "layout": [
-        {
-          "group": "full"
-        },
-        {
-          "group": "half",
-          "from_group": "full",
-          "scale": [2.0, 2.0]
-        },
-        {
-          "group": "quarter",
-          "from_group": "half",
-          "scale": [4.0, 4.0]
-        },
-        {
-          "group": "eighth",
-          "from_group": "quarter",
-          "scale": [8.0, 8.0]
-        }
-      ]
-    }
-  }
-}
-```
+- [power-of-2-pyramid.json](examples/power-of-2-pyramid.json) - Simple power-of-2 pyramid with 3 resolution levels
+- [custom-pyramid-levels.json](examples/custom-pyramid-levels.json) - Custom pyramid levels with named groups
 
 ## Composition with Domain-Specific Metadata
 
@@ -282,3 +223,9 @@ The `factors` field is provided for convenience and documentation purposes. The 
 - [OME-NGFF Multiscale Specification](https://ngff.openmicroscopy.org/latest/#multiscale-md)
 - [Zarr Specifications Discussion on Multiscales](https://github.com/zarr-developers/zarr-specs/issues/50)
 - [GeoZarr Specification](https://github.com/zarr-developers/geozarr-spec)
+
+## Acknowledgements
+
+The template is based on the [STAC extensions template](https://github.com/stac-extensions/template/blob/main/README.md).
+
+The convention was copied and modified from [EOPF-Explorer data-model](https://github.com/EOPF-Explorer/data-model/blob/main/attributes/multiscales/).
