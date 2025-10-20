@@ -1,0 +1,47 @@
+{
+    "f010a634-3525-416e-9320-8f44b5bc352c": {
+        "version": "0.1.0",
+        "schema": "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json",
+        "name": "Multiscales Attribute Extension",
+        "description": "Geospatial power-of-2 pyramid composed with geo:proj for coordinate reference system",
+        "spec": "https://github.com/zarr-experimental/multiscales/blob/v0.1.0/README.md",
+        "configuration": {
+            "version": "0.1.0",
+            "layout": [
+                {
+                    "group": "0"
+                },
+                {
+                    "group": "1",
+                    "from_group": "0",
+                    "factors": [2, 2],
+                    "scale": [2.0, 2.0],
+                    "translation": [0.0, 0.0],
+                    "resampling_method": "average"
+                },
+                {
+                    "group": "2",
+                    "from_group": "1",
+                    "factors": [2, 2],
+                    "scale": [4.0, 4.0],
+                    "translation": [0.0, 0.0],
+                    "resampling_method": "average"
+                }
+            ],
+            "resampling_method": "average"
+        }
+    },
+    "f17cb550-5864-4468-aeb7-f3180cfb622f": {
+        "version": "0.1.0",
+        "schema": "https://raw.githubusercontent.com/zarr-experimental/geo-proj/refs/tags/v0.1.0/schema.json",
+        "name": "geo:proj",
+        "description": "Coordinate reference system information for geospatial data",
+        "spec": "https://github.com/zarr-experimental/geo-proj/blob/v0.1.0/README.md",
+        "configuration": {
+            "code": "EPSG:32632",
+            "spatial_dimensions": ["Y", "X"],
+            "transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+            "bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
+        }
+    }
+}
