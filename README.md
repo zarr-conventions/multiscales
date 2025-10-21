@@ -1,6 +1,6 @@
 # Multiscales Attribute Extension for Zarr
 
-- **UUID**: f010a634-3525-416e-9320-8f44b5bc352c
+- **UUID**: d35379db-88df-4056-af3a-620245f8e347
 - **Name**: Multiscales Attribute Extension
 - **Schema**: "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json"
 - **Extension Maturity Classification**: Proposal
