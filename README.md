@@ -71,25 +71,33 @@ Array of objects representing the pyramid layout and transformation relationship
 * **Type**: `object[]`
 * **Required**: &#10003; Yes
 
-This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level, ordered from highest to lowest resolution. Each object contains:
-
-- **`group`** (required): Group name for this resolution level
-- **`from_group`** (optional): Source group used to generate this level
-- **`factors`** (optional): Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)
-- **`scale`** (optional): Array of scale factors per axis describing the resolution change
-- **`translation`** (optional): Array of translation offsets per axis in the coordinate space
-- **`resampling_method`** (optional): Resampling method for this specific level
+This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level, ordered from highest to lowest resolution. See the [Layout Object](#layout-object) section below for details.
 
 The first level typically contains only the `group` field (native resolution), while subsequent levels include transformation information.
 
 **Transformation Semantics**:
 
-The `scale` and `translation` parameters describe how to map from array indices to a coordinate space at each level. For downsampling operations:
+The `scale` and `translation` parameters describe the transformation from the coordinate space of the higher-resolution level to the current level. For downsampling operations:
 
 - **Scale** represents the multiplicative factor applied to coordinates (e.g., scale of 2.0 means one pixel represents twice the coordinate span)
 - **Translation** represents the coordinate offset, useful when downsampling takes a subset of the original sampling grid
 
 These transformations allow clients to determine the spatial extent of each pyramid level without needing to understand the specific downsampling algorithm.
+
+### Layout Object
+
+Each object in the layout array represents a single resolution level with the following properties:
+
+|   |Type|Description|Required|
+|---|---|---|---|
+|**group**|`string`|Relative group name for this resolution level|&#10003; Yes|
+|**from_group**|`string`|Source group used to generate this level|No|
+|**factors**|`number[]`|Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)|No|
+|**scale**|`number[]`|Array of scale factors per axis describing the resolution change|No|
+|**translation**|`number[]`|Array of translation offsets per axis in the coordinate space|No|
+|**resampling_method**|`string`|Resampling method for this specific level|No|
+
+Additional properties are allowed.
 
 #### resampling_method
 
