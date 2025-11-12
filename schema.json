@@ -24,13 +24,6 @@
             "type": "string",
             "description": "Source group used to generate this level"
           },
-          "factors": {
-            "type": "array",
-            "description": "Array of decimation factors per axis",
-            "items": {
-              "type": "number"
-            }
-          },
           "scale": {
             "type": "array",
             "description": "Array of scale factors per axis describing the resolution change",

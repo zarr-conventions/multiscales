@@ -21,7 +21,6 @@
                 {
                     "group": "1",
                     "from_group": "0",
-                    "factors": [2, 2],
                     "scale": [2.0, 2.0],
                     "translation": [0.0, 0.0],
                     "resampling_method": "average"
@@ -29,7 +28,6 @@
                 {
                     "group": "2",
                     "from_group": "1",
-                    "factors": [2, 2],
                     "scale": [4.0, 4.0],
                     "translation": [0.0, 0.0],
                     "resampling_method": "average"
