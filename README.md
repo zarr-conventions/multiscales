@@ -162,13 +162,30 @@ This generic multiscales specification is designed to be composed with domain-sp
 
 ### Geospatial Data
 
-For geospatial data, combine with `geo:proj` attributes from [`geo-proj` convention](https://github.com/zarr-experimental/geo-proj) to specify the Coordinate Reference System:
+For geospatial data, combine with `proj:*` attributes from [`geo-proj` convention](https://github.com/zarr-conventions/geo-proj) to specify the Coordinate Reference System:
 
 ```json
 {
   "zarr_format": 3,
   "node_type": "group",
   "attributes": {
+    "zarr_conventions_version": "0.1.0",
+    "zarr_conventions": {
+      "d35379db-88df-4056-af3a-620245f8e347": {
+        "version": "0.1.0",
+        "schema": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json",
+        "name": "multiscales",
+        "description": "Multiscale layout of zarr datasets",
+        "spec": "https://github.com/zarr-conventions/multiscales/blob/v0.1.0/README.md"
+      },
+      "f17cb550-5864-4468-aeb7-f3180cfb622f": {
+        "version": "0.1.0",
+        "schema": "https://raw.githubusercontent.com/zarr-conventions/geo-proj/refs/tags/v0.1.0/schema.json",
+        "name": "geo-proj",
+        "description": "Coordinate reference system information for geospatial data",
+        "spec": "https://github.com/zarr-conventions/geo-proj/blob/v0.1.0/README.md"
+      }
+    },
     "multiscales": {
       "version": "0.1.0",
       "layout": [
@@ -176,19 +193,15 @@ For geospatial data, combine with `geo:proj` attributes from [`geo-proj` convent
         {"group": "1", "from_group": "0", "factors": [2, 2], "scale": [2.0, 2.0]}
       ]
     },
-    "geo": {
-      "proj": {
-        "version": "0.1",
-        "code": "EPSG:32633",
-        "transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-        "bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
-      }
-    }
+    "proj:code": "EPSG:32633",
+    "proj:spatial_dimensions": ["Y", "X"],
+    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+    "proj:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
   }
 }
 ```
 
-At each resolution level, the `geo/proj` metadata would specify the appropriate transform for that resolution.
+At each resolution level, the `proj:*` metadata can be overridden with level-specific values as needed.
 
 ### Bioimaging Data
 
