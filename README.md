@@ -16,13 +16,14 @@ This specification defines a JSON object that encodes multiscale pyramid informa
     - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
     - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
     - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
+    - [DEM Multi-resolution with Upsampling](examples/dem-multiresolution.json)
     - [Geospatial Pyramid with geo:proj](examples/geospatial-pyramid.json)
 
 ## Motivation
 
 - Provides standardized multiscale pyramid encoding applicable across domains (geospatial, bioimaging, etc.)
-- Supports flexible decimation schemes (factor-of-2, factor-of-3, custom factors)
-- Explicitly captures scale and translation transformations induced by downsampling
+- Supports flexible resampling schemes for both downsampling and upsampling
+- Explicitly captures scale and translation transformations induced by resampling operations
 - Enables optimized data access patterns for visualization and analysis at different scales
 - Composable with domain-specific metadata (e.g., geo/proj for geospatial CRS information)
 
@@ -33,7 +34,7 @@ This specification emerged from discussions between the geospatial and bioimagin
 - **Bioimaging** (OME-NGFF): Multiscale metadata includes all spatial transformation information
 - **Geospatial**: Coordinate Reference System (CRS) information is typically separate from multiscale metadata
 
-This generic specification captures the **transformation induced by downsampling** (scale and translation), allowing domain-specific extensions to provide additional spatial metadata as needed.
+This generic specification captures the **transformation induced by resampling** (scale and translation), allowing domain-specific extensions to provide additional spatial metadata as needed. The specification supports both downsampling (lower resolution) and upsampling (higher resolution) use cases.
 
 ## Inheritance Model
 
@@ -46,11 +47,11 @@ The configuration in the Zarr convention metadata can be used in these parts of 
 - [x] Group
 - [ ] Array
 
-|   |Type|Description|Required|Reference|
-|---|---|---|---|---|
-|**version**|`string`|Multiscales metadata version|&#10003; Yes|[version](#version)|
-|**layout**|`object[]`|Array of objects representing the pyramid layout|&#10003; Yes|[layout](#layout)|
-|**resampling_method**|`string`|Resampling method used for downsampling|No|[resampling_method](#resampling_method)|
+|                       | Type       | Description                                        | Required     | Reference                               |
+| --------------------- | ---------- | -------------------------------------------------- | ------------ | --------------------------------------- |
+| **version**           | `string`   | Multiscales metadata version                       | &#10003; Yes | [version](#version)                     |
+| **layout**            | `object[]` | Array of objects representing the pyramid layout   | &#10003; Yes | [layout](#layout)                       |
+| **resampling_method** | `string`   | Default resampling method used for resampling data | No           | [resampling_method](#resampling_method) |
 
 ### Field Details
 
@@ -71,41 +72,45 @@ Array of objects representing the pyramid layout and transformation relationship
 * **Type**: `object[]`
 * **Required**: &#10003; Yes
 
-This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level, ordered from highest to lowest resolution. See the [Layout Object](#layout-object) section below for details.
+This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level. See the [Layout Object](#layout-object) section below for details.
 
-The first level typically contains only the `group` field (native resolution), while subsequent levels include transformation information.
+The native resolution level is identified by a `factors` value of `[1.0, 1.0, ...]`. Other levels can be derived through either downsampling (factors > 1.0) or upsampling (factors < 1.0).
 
 **Transformation Semantics**:
 
-The `scale` and `translation` parameters describe the transformation from the coordinate space of the higher-resolution level to the current level. For downsampling operations:
+The `scale` and `translation` parameters describe the transformation from the coordinate space of the source level (`from_group`) to the current level:
 
-- **Scale** represents the multiplicative factor applied to coordinates (e.g., scale of 2.0 means one pixel represents twice the coordinate span)
-- **Translation** represents the coordinate offset, useful when downsampling takes a subset of the original sampling grid
+- **Scale** represents the multiplicative factor applied to coordinates:
+  - Scale > 1.0: Downsampling (e.g., scale of 2.0 means one pixel represents twice the coordinate span)
+  - Scale = 1.0: Native resolution
+  - Scale < 1.0: Upsampling (e.g., scale of 0.5 means one pixel represents half the coordinate span)
+- **Translation** represents the coordinate offset in the target coordinate space
 
-These transformations allow clients to determine the spatial extent of each pyramid level without needing to understand the specific downsampling algorithm.
+These transformations allow clients to determine the spatial extent of each level without needing to understand the specific resampling algorithm.
 
 ### Layout Object
 
 Each object in the layout array represents a single resolution level with the following properties:
 
-|   |Type|Description|Required|
-|---|---|---|---|
-|**group**|`string`|Relative group name for this resolution level|&#10003; Yes|
-|**from_group**|`string`|Source group used to generate this level|No|
-|**scale**|`number[]`|Array of scale factors per axis describing the resolution change|No|
-|**translation**|`number[]`|Array of translation offsets per axis in the coordinate space|No|
-|**resampling_method**|`string`|Resampling method for this specific level|No|
+|                       | Type       | Description                                                                                                                           | Required                                  |
+| --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **group**             | `string`   | Relative group name for this resolution level                                                                                         | &#10003; Yes                              |
+| **from_group**        | `string`   | Source group used to generate this level                                                                                              | No                                        |
+| **factors**           | `number[]` | Array of decimation factors per axis describing the resolution in the whole multiscale group (e.g., `[2, 2]` for 2x decimation)   | No                                        |
+| **scale**             | `number[]` | Array of scale factors per axis describing the resolution change from the derived group. For native resolution, use `[1.0, 1.0, ...]` | &#10003; Yes (if `from_group` is present) |
+| **translation**       | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No                                        |
+| **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
 
 Additional properties are allowed.
 
 #### resampling_method
 
-Resampling method used for downsampling
+Resampling method used for resampling operations (downsampling or upsampling)
 
 * **Type**: `string`
 * **Required**: No
-* **Allowed values**: `"nearest"`, `"average"`, `"bilinear"`, `"cubic"`, `"cubic_spline"`, `"lanczos"`, `"mode"`, `"max"`, `"min"`, `"med"`, `"sum"`, `"q1"`, `"q3"`, `"rms"`, `"gauss"`
-* **Default**: `"nearest"`
+
+The resampling method can be any string value describing the algorithm used for resampling. Common methods for downsampling include `"nearest"`, `"average"`, `"bilinear"`, `"cubic"`, `"cubic_spline"`, `"lanczos"`, `"mode"`, `"max"`, `"min"`, `"med"`, `"sum"`, `"q1"`, `"q3"`, `"rms"`, `"gauss"`. For upsampling, methods like `"nearest"`, `"bilinear"`, `"cubic"`, `"lanczos"` are commonly used. Any method can be specified to support emerging resampling techniques.
 
 The same method SHALL apply across all levels unless overridden at the level-specific `resampling_method`.
 
@@ -152,6 +157,7 @@ The multiscales metadata enables complete discovery of the multiscale collection
 ### Validation Rules
 
 - **Level Consistency**: Resolution level group names SHALL match children group path values in the `layout` array
+- **Transformation Consistency**: If both `factors` and `scale` are provided, they SHALL be consistent with each other
 
 ## Examples
 
@@ -160,6 +166,7 @@ See the [examples](examples/) directory for complete Zarr convention metadata ex
 - [power-of-2-pyramid.json](examples/power-of-2-pyramid.json) - Simple power-of-2 pyramid with 3 resolution levels
 - [custom-pyramid-levels.json](examples/custom-pyramid-levels.json) - Custom pyramid levels with named groups
 - [sentinel-2-multiresolution.json](examples/sentinel-2-multiresolution.json) - Sentinel-2 multi-resolution layout with native resolution bands at 10m, 20m, and 60m
+- [dem-multiresolution.json](examples/dem-multiresolution.json) - Digital Elevation Model with both downsampled (90m, 270m) and upsampled (10m super-resolution) versions from native 30m resolution
 - [geospatial-pyramid.json](examples/geospatial-pyramid.json) - Geospatial pyramid composed with geo:proj convention for coordinate reference system
 
 ## Composition with Domain-Specific Metadata
@@ -195,7 +202,7 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
     "multiscales": {
       "version": "0.1.0",
       "layout": [
-        {"group": "0"},
+        {"group": "0", "scale": [1.0, 1.0]},
         {"group": "1", "from_group": "0", "scale": [2.0, 2.0]}
       ]
     },
@@ -236,6 +243,10 @@ The `scale` and `translation` parameters explicitly capture the transformation i
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from decimation factors
 2. **Flexibility**: Supports arbitrary downsampling schemes beyond simple decimation
 3. **Composability**: Domain-specific coordinate systems can build upon these transformations
+
+### Relationship to Decimation Factors
+
+The `factors` field is provided for convenience and documentation purposes. The `scale` field is the authoritative source for the resolution relationship. When both are present, they should be consistent.
 
 ## References
 

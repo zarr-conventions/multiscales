@@ -16,7 +16,8 @@
             "version": "0.1.0",
             "layout": [
                 {
-                    "group": "r10m"
+                    "group": "r10m",
+                    "scale": [1.0, 1.0]
                 },
                 {
                     "group": "r20m",
@@ -29,7 +30,20 @@
                     "from_group": "r10m",
                     "scale": [6.0, 6.0],
                     "translation": [0.0, 0.0]
-                }
+                },
+                {
+                    "group": "r120m",
+                    "from_group": "r60m",
+                    "scale": [2.0, 2.0],
+                    "translation": [0.0, 0.0]
+                },
+                {
+                    "group": "r240m",
+                    "from_group": "r120m",
+                    "scale": [2.0, 2.0],
+                    "translation": [0.0, 0.0]
+                },
+
             ]
         }
     }

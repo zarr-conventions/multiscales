@@ -23,29 +23,37 @@
             "version": "0.1.0",
             "layout": [
                 {
-                    "group": "0",
+                    "group": "dem_30m",
+                    "factors": [1.0, 1.0],
                     "scale": [1.0, 1.0]
                 },
                 {
-                    "group": "1",
-                    "from_group": "0",
-                    "scale": [2.0, 2.0],
-                    "translation": [0.0, 0.0],
+                    "group": "dem_90m",
+                    "from_group": "dem_30m",
+                    "factors": [3.0, 3.0],
+                    "scale": [3.0, 3.0],
                     "resampling_method": "average"
                 },
                 {
-                    "group": "2",
-                    "from_group": "1",
-                    "scale": [4.0, 4.0],
-                    "translation": [0.0, 0.0],
+                    "group": "dem_270m",
+                    "from_group": "dem_90m",
+                    "factors": [9.0, 9.0],
+                    "scale": [3.0, 3.0],
                     "resampling_method": "average"
+                },
+                {
+                    "group": "dem_10m_superres",
+                    "from_group": "dem_30m",
+                    "factors": [0.333, 0.333],
+                    "scale": [0.333, 0.333],
+                    "resampling_method": "cubic"
                 }
             ],
-            "resampling_method": "average"
+            "resampling_method": "cubic"
         },
-        "proj:code": "EPSG:32632",
-        "proj:spatial_dimensions": ["Y", "X"],
-        "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-        "proj:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
+        "proj:code": "EPSG:4326",
+        "proj:spatial_dimensions": ["latitude", "longitude"],
+        "proj:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0],
+        "proj:bbox": [-180.0, -90.0, 180.0, 90.0]
     }
 }

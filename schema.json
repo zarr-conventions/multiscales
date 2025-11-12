@@ -24,9 +24,16 @@
             "type": "string",
             "description": "Source group used to generate this level"
           },
+          "factors": {
+            "type": "array",
+            "description": "Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)",
+            "items": {
+              "type": "number"
+            }
+          },
           "scale": {
             "type": "array",
-            "description": "Array of scale factors per axis describing the resolution change",
+            "description": "Array of scale factors per axis describing the resolution change from the derived group",
             "items": {
               "type": "number"
             }
@@ -40,20 +47,23 @@
           },
           "resampling_method": {
             "type": "string",
-            "description": "Resampling method for this specific level",
-            "enum": ["nearest", "average", "bilinear", "cubic", "cubic_spline", "lanczos", "mode", "max", "min", "med", "sum", "q1", "q3", "rms", "gauss"]
+            "description": "Resampling method for this specific level"
           }
         },
-        "required": ["group"],
+        "required": ["group", "scale"],
+        "if": {
+          "required": ["from_group"]
+        },
+        "then": {
+          "required": ["scale"]
+        },
         "additionalProperties": true
       },
       "minItems": 1
     },
     "resampling_method": {
       "type": "string",
-      "description": "Default resampling method used for downsampling",
-      "enum": ["nearest", "average", "bilinear", "cubic", "cubic_spline", "lanczos", "mode", "max", "min", "med", "sum", "q1", "q3", "rms", "gauss"],
-      "default": "nearest"
+      "description": "Default resampling method used for downsampling"
     }
   },
   "required": ["version", "layout"],

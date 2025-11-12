@@ -16,7 +16,8 @@
             "version": "0.1.0",
             "layout": [
                 {
-                    "group": "full"
+                    "group": "full",
+                    "scale": [1.0, 1.0]
                 },
                 {
                     "group": "half",
