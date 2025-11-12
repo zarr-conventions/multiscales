@@ -17,33 +17,44 @@
             "layout": [
                 {
                     "group": "r10m",
-                    "scale": [1.0, 1.0]
+                    "scale": [1.0, 1.0],
+                    "factors": [1.0, 1.0]
                 },
                 {
                     "group": "r20m",
                     "from_group": "r10m",
                     "scale": [2.0, 2.0],
-                    "translation": [0.0, 0.0]
+                    "translation": [0.0, 0.0],
+                    "factors": [2.0, 2.0]
                 },
                 {
                     "group": "r60m",
                     "from_group": "r10m",
                     "scale": [6.0, 6.0],
-                    "translation": [0.0, 0.0]
+                    "translation": [0.0, 0.0],
+                    "factors": [6.0, 6.0]
                 },
                 {
                     "group": "r120m",
                     "from_group": "r60m",
                     "scale": [2.0, 2.0],
-                    "translation": [0.0, 0.0]
+                    "translation": [0.0, 0.0],
+                    "factors": [12.0, 12.0]
                 },
                 {
-                    "group": "r240m",
+                    "group": "r360m",
                     "from_group": "r120m",
-                    "scale": [2.0, 2.0],
-                    "translation": [0.0, 0.0]
+                    "scale": [3.0, 3.0],
+                    "translation": [0.0, 0.0],
+                    "factors": [36.0, 36.0]
                 },
-
+                {
+                    "group": "r720m",
+                    "from_group": "r360m",
+                    "scale": [2.0, 2.0],
+                    "translation": [0.0, 0.0],
+                    "factors": [72.0, 72.0]
+                }
             ]
         }
     }
