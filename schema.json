@@ -1,82 +1,71 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Template Convention Metadata",
-  "description": "Schema for Template Zarr convention metadata with fixed UUID and exact values",
+  "$id": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json",
+  "title": "Multiscales Convention",
+  "description": "Schema for multiscale pyramid information in Zarr. Properties define the hierarchical layout and transformations.",
   "type": "object",
   "properties": {
-    "f010a634-3525-416e-9320-8f44b5bc352c": {
-      "type": "object",
-      "description": "Template convention metadata",
-      "properties": {
-        "version": {
-          "type": "string",
-          "const": "0.1.0",
-          "description": "Semantic version number of the convention"
-        },
-        "schema": {
-          "type": "string",
-          "const": "https://raw.githubusercontent.com/zarr-conventions/template/refs/tags/v0.1.0/schema.json",
-          "description": "URL to the JSON Schema definition for this convention"
-        },
-        "name": {
-          "type": "string",
-          "const": "Template",
-          "description": "Human-readable name of the convention"
-        },
-        "description": {
-          "type": "string",
-          "const": "Template convention for demonstrating Zarr convention metadata structure",
-          "description": "Brief description of the convention's purpose and usage"
-        },
-        "spec": {
-          "type": "string",
-          "const": "https://github.com/zarr-conventions/template/blob/v0.1.0/README.md",
-          "description": "URL to the full specification document"
-        },
-        "configuration": {
-          "type": "object",
-          "description": "Convention-specific configuration parameters",
-          "properties": {
-            "new_field": {
-              "type": "string",
-              "description": "REQUIRED. Describe the required field..."
-            },
-            "xyz": {
-              "type": "object",
-              "description": "XYZ Object containing x, y, z coordinates",
-              "properties": {
-                "x": {
-                  "type": "number",
-                  "description": "REQUIRED. X coordinate value"
-                },
-                "y": {
-                  "type": "number",
-                  "description": "REQUIRED. Y coordinate value"
-                },
-                "z": {
-                  "type": "number",
-                  "description": "REQUIRED. Z coordinate value"
-                }
-              },
-              "required": ["x", "y", "z"],
-              "additionalProperties": false
-            },
-            "another_one": {
-              "type": "array",
-              "description": "Array of numeric values",
-              "items": {
-                "type": "number"
-              }
+    "version": {
+      "type": "string",
+      "description": "Multiscales metadata version",
+      "pattern": "^0\\.1\\.0$"
+    },
+    "layout": {
+      "type": "array",
+      "description": "Array of objects representing the pyramid layout and transformation relationships",
+      "items": {
+        "type": "object",
+        "properties": {
+          "group": {
+            "type": "string",
+            "description": "Group name for this resolution level"
+          },
+          "from_group": {
+            "type": "string",
+            "description": "Source group used to generate this level"
+          },
+          "factors": {
+            "type": "array",
+            "description": "Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)",
+            "items": {
+              "type": "number"
             }
           },
-          "required": ["new_field"],
-          "additionalProperties": false
-        }
+          "scale": {
+            "type": "array",
+            "description": "Array of scale factors per axis describing the resolution change from the derived group",
+            "items": {
+              "type": "number"
+            }
+          },
+          "translation": {
+            "type": "array",
+            "description": "Array of translation offsets per axis in the coordinate space",
+            "items": {
+              "type": "number"
+            }
+          },
+          "resampling_method": {
+            "type": "string",
+            "description": "Resampling method for this specific level"
+          }
+        },
+        "required": ["group", "scale"],
+        "if": {
+          "required": ["from_group"]
+        },
+        "then": {
+          "required": ["scale"]
+        },
+        "additionalProperties": true
       },
-      "required": ["version", "schema", "name", "description", "spec", "configuration"],
-      "additionalProperties": false
+      "minItems": 1
+    },
+    "resampling_method": {
+      "type": "string",
+      "description": "Default resampling method used for downsampling"
     }
   },
-  "required": ["f010a634-3525-416e-9320-8f44b5bc352c"],
+  "required": ["version", "layout"],
   "additionalProperties": true
 }
