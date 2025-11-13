@@ -49,7 +49,6 @@ The configuration in the Zarr convention metadata can be used in these parts of 
 
 |                       | Type       | Description                                        | Required     | Reference                               |
 | --------------------- | ---------- | -------------------------------------------------- | ------------ | --------------------------------------- |
-| **version**           | `string`   | Multiscales metadata version                       | &#10003; Yes | [version](#version)                     |
 | **layout**            | `object[]` | Array of objects representing the pyramid layout   | &#10003; Yes | [layout](#layout)                       |
 | **resampling_method** | `string`   | Default resampling method used for resampling data | No           | [resampling_method](#resampling_method) |
 
@@ -200,7 +199,6 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
       }
     },
     "multiscales": {
-      "version": "0.1.0",
       "layout": [
         {"group": "0", "scale": [1.0, 1.0]},
         {"group": "1", "from_group": "0", "scale": [2.0, 2.0]}
