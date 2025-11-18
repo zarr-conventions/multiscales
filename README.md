@@ -75,17 +75,7 @@ This field SHALL describe the pyramid hierarchy with an array of objects represe
 
 Each level can optionally reference another level via `from_group`, establishing a directed graph of resolution relationships. Levels can be derived through either downsampling (scale > 1.0) or upsampling (scale < 1.0) from their source group.
 
-**Transformation Semantics**:
-
-The `scale` and `translation` parameters describe the coordinate transformation from the source level (`from_group`) to the current level. Specifically:
-
-- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
-  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
-  - Scale = 1.0: No scaling (same coordinate space)
-  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
-- **Translation** represents the coordinate offset applied in the current level's coordinate space
-
-These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
+The `transform` object on each level describes the coordinate transformation between resolution levels. See the [Transform Object](#transform-object) section for details on how to specify transformations.
 
 ### Layout Object
 
@@ -95,12 +85,75 @@ Each object in the layout array represents a single resolution level with the fo
 | --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | **group**             | `string`   | Relative group name for this resolution level                                                                                         | &#10003; Yes                              |
 | **from_group**        | `string`   | Source group used to generate this level                                                                                              | No                                        |
-| **factors**           | `number[]` | Array of resampling factors per axis describing this level's resolution characteristics (e.g., `[2.0, 2.0]` indicates half the sampling rate in each dimension compared to a reference level) | No                                        |
-| **scale**             | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`from_group`) to this level | &#10003; Yes (if `from_group` is present) |
-| **translation**       | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No                                        |
+| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `from_group` is present) |
 | **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
 
 Additional properties are allowed.
+
+### Transform Object
+
+The `transform` object provides a flexible mechanism to describe coordinate transformations for each resolution level. This object can contain different sets of parameters depending on the conventions being used:
+
+#### Generic Scale and Translation
+
+For general-purpose transformations, the `transform` object MAY contain:
+
+|                   | Type       | Description                                                                                                                           | Required |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`from_group`) to this level          | No       |
+| **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
+
+**Example:**
+
+```json
+{
+  "group": "1",
+  "from_group": "0",
+  "transform": {
+    "scale": [2.0, 2.0],
+    "translation": [0.5, 0.5]
+  }
+}
+```
+
+#### Geospatial Transformations
+
+When combined with the `geo-proj` convention, the `transform` object MAY contain geospatial transformation parameters:
+
+|                     | Type       | Description                                                                               | Required |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
+| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters)                                | No       |
+| **proj:shape**      | `number[]` | Shape of the raster in pixels [height, width]                                            | No       |
+
+**Example:**
+
+```json
+{
+  "group": "r10m",
+  "transform": {
+    "scale": [1.0, 1.0],
+    "translation": [0.0, 0.0],
+    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+    "proj:shape": [10000, 10000]
+  }
+}
+```
+
+#### Convention-Specific Transformations
+
+Other conventions MAY define their own transformation parameters within the `transform` object. The object uses `additionalProperties: true` to allow for extensibility. Implementations SHOULD document any convention-specific transformation parameters they introduce.
+
+**Transformation Semantics**:
+
+When `scale` and `translation` are used within the `transform` object:
+
+- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
+  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
+  - Scale = 1.0: No scaling (same coordinate space)
+  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
+- **Translation** represents the coordinate offset applied in the current level's coordinate space
+
+These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
 
 #### resampling_method
 
@@ -156,7 +209,6 @@ Consolidated metadata SHOULD be used for multiscale groups to ensure complete di
 ### Validation Rules
 
 - **Level Consistency**: Resolution level group names SHALL match children group path values in the `layout` array
-- **Transformation Consistency**: If both `factors` and `scale` are provided, they SHALL be consistent with each other
 
 ## Examples
 
@@ -200,8 +252,8 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
     },
     "multiscales": {
       "layout": [
-        {"group": "0", "scale": [1.0, 1.0]},
-        {"group": "1", "from_group": "0", "scale": [2.0, 2.0]}
+        {"group": "0", "transform": {"scale": [1.0, 1.0], "translation": [0.0, 0.0]}},
+        {"group": "1", "from_group": "0", "transform": {"scale": [2.0, 2.0], "translation": [0.0, 0.0]}}
       ]
     },
     "proj:code": "EPSG:32633",
@@ -234,42 +286,15 @@ This specification uses semantic versioning (SemVer) for version management:
 
 ## Implementation Notes
 
-### Scale and Translation Parameters
+### Transform Object
 
-The `scale` and `translation` parameters explicitly capture the coordinate transformation between resolution levels. This approach has several advantages:
+The `transform` object explicitly captures the coordinate transformation between resolution levels. This approach has several advantages:
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
-2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships
+2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object can contain generic scale/translation parameters or convention-specific parameters (e.g., `proj:transform` for geospatial data)
 3. **Composability**: Domain-specific coordinate systems can build upon these transformations
 4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `from_group`
-
-### Relationship Between `factors` and `scale`
-
-The `factors` and `scale` fields serve complementary purposes in describing resolution relationships:
-
-- **`scale`**: Describes the coordinate transformation from a specific source level (`from_group`) to the current level. This is a pairwise relationship between two groups. For example, `from_group: "level_10m"` with `scale: [2.0, 2.0]` means coordinates are multiplied by 2.0 when transforming from `level_10m` to the current level.
-
-- **`factors`**: Describes the resolution characteristics of a level, which can be interpreted relative to other levels in the pyramid. This is useful for documenting the overall resolution structure. For example, `factors: [1.0, 1.0]` might indicate the finest resolution in the collection, while `factors: [4.0, 4.0]` indicates a coarser resolution.
-
-**Consistency**: When both fields are present, they MUST be mathematically consistent with the pyramid structure. If multiple levels are chained via `from_group` relationships, the cumulative product of `scale` values along a path should equal the ratio of `factors` values between the endpoints.
-
-**Example** with three levels:
-```json
-{
-  "layout": [
-    {"group": "10m", "factors": [1.0, 1.0]},
-    {"group": "20m", "from_group": "10m", "scale": [2.0, 2.0], "factors": [2.0, 2.0]},
-    {"group": "40m", "from_group": "20m", "scale": [2.0, 2.0], "factors": [4.0, 4.0]}
-  ]
-}
-```
-
-In this example:
-- `20m` has `scale: [2.0, 2.0]` relative to `10m`, and `factors: [2.0, 2.0]`
-- `40m` has `scale: [2.0, 2.0]` relative to `20m`, and `factors: [4.0, 4.0]`
-- The cumulative scale from `10m` to `40m` is 2.0 × 2.0 = 4.0, matching the factors ratio (4.0 / 1.0)
-
-The `scale` field is the authoritative source for coordinate transformations between specific levels. The `factors` field provides convenient documentation of each level's resolution characteristics within the collection.
+5. **Extensibility**: The `additionalProperties: true` schema allows conventions to define their own transformation parameters within the transform object
 
 ## References
 

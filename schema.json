@@ -5,11 +5,6 @@
   "description": "Schema for multiscale pyramid information in Zarr. Properties define the hierarchical layout and transformations.",
   "type": "object",
   "properties": {
-    "version": {
-      "type": "string",
-      "description": "Multiscales metadata version",
-      "pattern": "^0\\.1\\.0$"
-    },
     "layout": {
       "type": "array",
       "description": "Array of objects representing the pyramid layout and transformation relationships",
@@ -24,38 +19,38 @@
             "type": "string",
             "description": "Source group used to generate this level"
           },
-          "factors": {
-            "type": "array",
-            "description": "Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)",
-            "items": {
-              "type": "number"
-            }
-          },
-          "scale": {
-            "type": "array",
-            "description": "Array of scale factors per axis describing the resolution change from the derived group",
-            "items": {
-              "type": "number"
-            }
-          },
-          "translation": {
-            "type": "array",
-            "description": "Array of translation offsets per axis in the coordinate space",
-            "items": {
-              "type": "number"
-            }
+          "transform": {
+            "type": "object",
+            "description": "Transformation parameters describing the coordinate transformation for this level. Can contain scale/translation, proj:transform/proj:shape, or other convention-specific transformation parameters.",
+            "properties": {
+              "scale": {
+                "type": "array",
+                "description": "Array of scale factors per axis describing the resolution change from the derived group",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "translation": {
+                "type": "array",
+                "description": "Array of translation offsets per axis in the coordinate space",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "additionalProperties": true
           },
           "resampling_method": {
             "type": "string",
             "description": "Resampling method for this specific level"
           }
         },
-        "required": ["group", "scale"],
+        "required": ["group"],
         "if": {
           "required": ["from_group"]
         },
         "then": {
-          "required": ["scale"]
+          "required": ["transform"]
         },
         "additionalProperties": true
       },
@@ -66,6 +61,6 @@
       "description": "Default resampling method used for downsampling"
     }
   },
-  "required": ["version", "layout"],
+  "required": ["layout"],
   "additionalProperties": true
 }

@@ -23,28 +23,40 @@
             "layout": [
                 {
                     "group": "dem_30m",
-                    "factors": [1.0, 1.0],
-                    "scale": [1.0, 1.0]
+                    "transform": {
+                        "scale": [1.0, 1.0],
+                        "translation": [0.0, 0.0],
+                        "proj:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0]
+                    }
                 },
                 {
                     "group": "dem_90m",
                     "from_group": "dem_30m",
-                    "factors": [3.0, 3.0],
-                    "scale": [3.0, 3.0],
+                    "transform": {
+                        "scale": [3.0, 3.0],
+                        "translation": [0.0, 0.0],
+                        "proj:transform": [0.000833334, 0.0, -180.0, 0.0, -0.000833334, 90.0]
+                    },
                     "resampling_method": "average"
                 },
                 {
                     "group": "dem_270m",
                     "from_group": "dem_90m",
-                    "factors": [9.0, 9.0],
-                    "scale": [3.0, 3.0],
+                    "transform": {
+                        "scale": [3.0, 3.0],
+                        "translation": [0.0, 0.0],
+                        "proj:transform": [0.0025, 0.0, -180.0, 0.0, -0.0025, 90.0]
+                    },
                     "resampling_method": "average"
                 },
                 {
                     "group": "dem_10m_superres",
                     "from_group": "dem_30m",
-                    "factors": [0.333, 0.333],
-                    "scale": [0.333, 0.333],
+                    "transform": {
+                        "scale": [0.333, 0.333],
+                        "translation": [0.0, 0.0],
+                        "proj:transform": [0.000092593, 0.0, -180.0, 0.0, -0.000092593, 90.0]
+                    },
                     "resampling_method": "cubic"
                 }
             ],
