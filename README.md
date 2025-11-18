@@ -15,6 +15,7 @@ This specification defines a JSON object that encodes multiscale pyramid informa
 - Examples:
     - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
     - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
+    - [Array-based Pyramid](examples/array-based-pyramid.json)
     - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
     - [DEM Multi-resolution with Upsampling](examples/dem-multiresolution.json)
     - [Geospatial Pyramid with geo:proj](examples/geospatial-pyramid.json)
