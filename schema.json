@@ -21,26 +21,26 @@
             "description": "Path to the source Zarr group or array used to generate this level. Uses the same path syntax as 'asset' with '/' separator for nested resources",
             "pattern": "^(?!/)(?!.*(\\.\\.))([^/]+(/[^/]+)*)$"
           },
-          "factors": {
-            "type": "array",
-            "description": "Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)",
-            "items": {
-              "type": "number"
-            }
-          },
-          "scale": {
-            "type": "array",
-            "description": "Array of scale factors per axis describing the resolution change from the derived group",
-            "items": {
-              "type": "number"
-            }
-          },
-          "translation": {
-            "type": "array",
-            "description": "Array of translation offsets per axis in the coordinate space",
-            "items": {
-              "type": "number"
-            }
+          "transform": {
+            "type": "object",
+            "description": "Transformation parameters describing the coordinate transformation for this level. Can contain scale/translation, proj:transform/proj:shape, or other convention-specific transformation parameters.",
+            "properties": {
+              "scale": {
+                "type": "array",
+                "description": "Array of scale factors per axis describing the resolution change from the derived group",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "translation": {
+                "type": "array",
+                "description": "Array of translation offsets per axis in the coordinate space",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "additionalProperties": true
           },
           "resampling_method": {
             "type": "string",
@@ -52,7 +52,7 @@
           "required": ["derived_from"]
         },
         "then": {
-          "required": ["scale"]
+          "required": ["transform"]
         },
         "additionalProperties": true
       },

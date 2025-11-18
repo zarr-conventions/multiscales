@@ -96,9 +96,7 @@ Each object in the layout array represents a single resolution level with the fo
 | --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | **asset**             | `string`   | Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., `"0"`) for a child group, or a path with `/` separator for nested groups or arrays (e.g., `"0/data"` for an array within a group) | &#10003; Yes                              |
 | **derived_from**      | `string`   | Path to the source Zarr group or array used to generate this level. Uses the same path syntax as `asset` with `/` separator for nested resources | No                                        |
-| **factors**           | `number[]` | Array of resampling factors per axis describing this level's resolution characteristics (e.g., `[2.0, 2.0]` indicates half the sampling rate in each dimension compared to a reference level) | No                                        |
-| **scale**             | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level | &#10003; Yes (if `derived_from` is present) |
-| **translation**       | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No                                        |
+| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `from_group` is present) |
 | **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
 
 Additional properties are allowed.
@@ -193,6 +191,71 @@ multiscales/
 - **Clarity**: For array-based layouts, include the full path to the array (e.g., `"0/data"`)
 - **Compatibility**: Group-based layouts are more common and may have better tool support
 
+### Transform Object
+
+The `transform` object provides a flexible mechanism to describe coordinate transformations for each resolution level. This object can contain different sets of parameters depending on the conventions being used:
+
+#### Generic Scale and Translation
+
+For general-purpose transformations, the `transform` object MAY contain:
+
+|                   | Type       | Description                                                                                                                           | Required |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`from_group`) to this level          | No       |
+| **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
+
+**Example:**
+
+```json
+{
+  "group": "1",
+  "from_group": "0",
+  "transform": {
+    "scale": [2.0, 2.0],
+    "translation": [0.5, 0.5]
+  }
+}
+```
+
+#### Geospatial Transformations
+
+When combined with the `geo-proj` convention, the `transform` object MAY contain geospatial transformation parameters:
+
+|                     | Type       | Description                                                                               | Required |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
+| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters)                                | No       |
+| **proj:shape**      | `number[]` | Shape of the raster in pixels [height, width]                                            | No       |
+
+**Example:**
+
+```json
+{
+  "group": "r10m",
+  "transform": {
+    "scale": [1.0, 1.0],
+    "translation": [0.0, 0.0],
+    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+    "proj:shape": [10000, 10000]
+  }
+}
+```
+
+#### Convention-Specific Transformations
+
+Other conventions MAY define their own transformation parameters within the `transform` object. The object uses `additionalProperties: true` to allow for extensibility. Implementations SHOULD document any convention-specific transformation parameters they introduce.
+
+**Transformation Semantics**:
+
+When `scale` and `translation` are used within the `transform` object:
+
+- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
+  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
+  - Scale = 1.0: No scaling (same coordinate space)
+  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
+- **Translation** represents the coordinate offset applied in the current level's coordinate space
+
+These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
+
 #### resampling_method
 
 Resampling method used for resampling operations (downsampling or upsampling)
@@ -247,7 +310,6 @@ Consolidated metadata SHOULD be used for multiscale groups to ensure complete di
 ### Validation Rules
 
 - **Level Consistency**: Resolution level group names SHALL match children group path values in the `layout` array
-- **Transformation Consistency**: If both `factors` and `scale` are provided, they SHALL be consistent with each other
 
 ## Examples
 
@@ -292,8 +354,8 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
     },
     "multiscales": {
       "layout": [
-        {"asset": "0", "scale": [1.0, 1.0]},
-        {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
+        {"asset": "0", "transform": {"scale": [1.0, 1.0], "translation": [0.0, 0.0]}},
+        {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0], "translation": [0.0, 0.0]}}
       ]
     },
     "proj:code": "EPSG:32633",
@@ -326,12 +388,12 @@ This specification uses semantic versioning (SemVer) for version management:
 
 ## Implementation Notes
 
-### Scale and Translation Parameters
+### Transform Object
 
-The `scale` and `translation` parameters explicitly capture the coordinate transformation between resolution levels. This approach has several advantages:
+The `transform` object explicitly captures the coordinate transformation between resolution levels. This approach has several advantages:
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
-2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships
+2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object can contain generic scale/translation parameters or convention-specific parameters (e.g., `proj:transform` for geospatial data)
 3. **Composability**: Domain-specific coordinate systems can build upon these transformations
 4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
 
