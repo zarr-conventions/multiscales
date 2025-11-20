@@ -76,17 +76,7 @@ This field SHALL describe the pyramid hierarchy with an array of objects represe
 
 Each level can optionally reference another level via `derived_from`, establishing a directed graph of resolution relationships. Levels can be derived through either downsampling (scale > 1.0) or upsampling (scale < 1.0) from their source asset.
 
-**Transformation Semantics**:
-
-The `scale` and `translation` parameters describe the coordinate transformation from the source level (`derived_from`) to the current level. Specifically:
-
-- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
-  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
-  - Scale = 1.0: No scaling (same coordinate space)
-  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
-- **Translation** represents the coordinate offset applied in the current level's coordinate space
-
-These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
+The `transform` object on each level describes the coordinate transformation between resolution levels. See the [Transform Object](#transform-object) section for details on how to specify transformations.
 
 ### Layout Object
 
@@ -395,35 +385,8 @@ The `transform` object explicitly captures the coordinate transformation between
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
 2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object can contain generic scale/translation parameters or convention-specific parameters (e.g., `proj:transform` for geospatial data)
 3. **Composability**: Domain-specific coordinate systems can build upon these transformations
-4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
-
-### Relationship Between `factors` and `scale`
-
-The `factors` and `scale` fields serve complementary purposes in describing resolution relationships:
-
-- **`scale`**: Describes the coordinate transformation from a specific source level (`derived_from`) to the current level. This is a pairwise relationship between two assets. For example, `derived_from: "level_10m"` with `scale: [2.0, 2.0]` means coordinates are multiplied by 2.0 when transforming from `level_10m` to the current level.
-
-- **`factors`**: Describes the resolution characteristics of a level, which can be interpreted relative to other levels in the pyramid. This is useful for documenting the overall resolution structure. For example, `factors: [1.0, 1.0]` might indicate the finest resolution in the collection, while `factors: [4.0, 4.0]` indicates a coarser resolution.
-
-**Consistency**: When both fields are present, they MUST be mathematically consistent with the pyramid structure. If multiple levels are chained via `derived_from` relationships, the cumulative product of `scale` values along a path should equal the ratio of `factors` values between the endpoints.
-
-**Example** with three levels:
-```json
-{
-  "layout": [
-    {"asset": "10m", "factors": [1.0, 1.0]},
-    {"asset": "20m", "derived_from": "10m", "scale": [2.0, 2.0], "factors": [2.0, 2.0]},
-    {"asset": "40m", "derived_from": "20m", "scale": [2.0, 2.0], "factors": [4.0, 4.0]}
-  ]
-}
-```
-
-In this example:
-- `20m` has `scale: [2.0, 2.0]` relative to `10m`, and `factors: [2.0, 2.0]`
-- `40m` has `scale: [2.0, 2.0]` relative to `20m`, and `factors: [4.0, 4.0]`
-- The cumulative scale from `10m` to `40m` is 2.0 × 2.0 = 4.0, matching the factors ratio (4.0 / 1.0)
-
-The `scale` field is the authoritative source for coordinate transformations between specific levels. The `factors` field provides convenient documentation of each level's resolution characteristics within the collection.
+4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `from_group`
+5. **Extensibility**: The `additionalProperties: true` schema allows conventions to define their own transformation parameters within the transform object
 
 ## References
 
