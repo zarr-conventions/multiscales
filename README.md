@@ -109,7 +109,7 @@ The `asset` and `derived_from` fields use Zarr path nomenclature to reference gr
 
 #### Path Format
 
-- **Simple name**: References a direct child group (e.g., `"0"`, `"level1"`, `"full"`)
+- **Simple name**: References a direct child group or array (e.g., `"0"`, `"level1"`, `"full"`)
 - **Path with `/` separator**: References nested groups or arrays (e.g., `"0/data"`, `"level1/array"`)
 - **Relative paths**: All paths are relative to the group containing the `multiscales` metadata. Relative paths cannot start with `/` or refer to parent directories (`..`).
 
