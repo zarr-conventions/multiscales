@@ -183,23 +183,24 @@ multiscales/
 
 ### Transform Object
 
-The `transform` object provides a flexible mechanism to describe coordinate transformations for each resolution level. This object can contain different sets of parameters depending on the conventions being used:
+The `transform` object provides a flexible mechanism to describe **relative** coordinate transformations between resolution levels. This object contains parameters that describe how to transform coordinates from a source level to the current level.
 
-#### Generic Scale and Translation
+#### Relative Transformations (inside `transform` object)
 
 For general-purpose transformations, the `transform` object MAY contain:
 
 |                   | Type       | Description                                                                                                                           | Required |
 | ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`from_group`) to this level          | No       |
+| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level        | No       |
 | **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
+| **factors**       | `number[]` | Array of resampling factors per axis describing this level's resolution characteristics relative to a reference level                | No       |
 
 **Example:**
 
 ```json
 {
-  "group": "1",
-  "from_group": "0",
+  "asset": "1",
+  "derived_from": "0",
   "transform": {
     "scale": [2.0, 2.0],
     "translation": [0.5, 0.5]
@@ -207,32 +208,36 @@ For general-purpose transformations, the `transform` object MAY contain:
 }
 ```
 
-#### Geospatial Transformations
+#### Absolute Positioning (outside `transform` object)
 
-When combined with the `geo-proj` convention, the `transform` object MAY contain geospatial transformation parameters:
+Absolute positioning information, such as geospatial coordinates, should be placed at the layout entry level, NOT inside the `transform` object. This makes it clear that these parameters describe the absolute position of the level, not the relative transformation between levels.
+
+When combined with the `geo-proj` convention, layout entries MAY include:
 
 |                     | Type       | Description                                                                               | Required |
 | ------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
-| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters)                                | No       |
+| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters) describing absolute position   | No       |
 | **proj:shape**      | `number[]` | Shape of the raster in pixels [height, width]                                            | No       |
 
 **Example:**
 
 ```json
 {
-  "group": "r10m",
+  "asset": "r10m",
   "transform": {
     "scale": [1.0, 1.0],
-    "translation": [0.0, 0.0],
-    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-    "proj:shape": [10000, 10000]
-  }
+    "translation": [0.0, 0.0]
+  },
+  "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+  "proj:shape": [10000, 10000]
 }
 ```
 
+**Note:** The `transform` object contains **relative** transformations (how to go from one level to another), while `proj:transform` and `proj:shape` describe **absolute** positioning in the coordinate reference system.
+
 #### Convention-Specific Transformations
 
-Other conventions MAY define their own transformation parameters within the `transform` object. The object uses `additionalProperties: true` to allow for extensibility. Implementations SHOULD document any convention-specific transformation parameters they introduce.
+Other conventions MAY define their own transformation parameters. Relative transformation parameters should be placed inside the `transform` object, while absolute positioning parameters should be placed at the layout entry level. Implementations SHOULD document any convention-specific transformation parameters they introduce.
 
 **Transformation Semantics**:
 
@@ -380,13 +385,13 @@ This specification uses semantic versioning (SemVer) for version management:
 
 ### Transform Object
 
-The `transform` object explicitly captures the coordinate transformation between resolution levels. This approach has several advantages:
+The `transform` object explicitly captures the **relative** coordinate transformation between resolution levels. This approach has several advantages:
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
-2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object can contain generic scale/translation parameters or convention-specific parameters (e.g., `proj:transform` for geospatial data)
-3. **Composability**: Domain-specific coordinate systems can build upon these transformations
-4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `from_group`
-5. **Extensibility**: The `additionalProperties: true` schema allows conventions to define their own transformation parameters within the transform object
+2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object contains relative transformation parameters (scale, translation, factors)
+3. **Composability**: Domain-specific coordinate systems can build upon these transformations. Absolute positioning information (e.g., `proj:transform` for geospatial data) is placed at the layout entry level, outside the transform object
+4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
+5. **Clarity**: Separating relative transformations (inside `transform`) from absolute positioning (outside `transform`) makes the intent clear and avoids confusion
 
 ## References
 

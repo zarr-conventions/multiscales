@@ -24,49 +24,60 @@
         {
           "asset": "r10m",
           "transform": {
-            "proj:shape": [10980, 10980],
-            "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0]
-          }
+            "scale": [1.0, 1.0]
+          },
+          "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+          "proj:shape": [10980, 10980]
         },
         {
           "asset": "r20m",
           "derived_from": "r10m",
           "transform": {
-            "proj:shape": [5490, 5490],
-            "proj:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0]
-          }
+            "scale": [2.0, 2.0],
+            "translation": [0.0, 0.0]
+          },
+          "proj:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0],
+          "proj:shape": [5490, 5490]
         },
         {
           "asset": "r60m",
           "derived_from": "r10m",
           "transform": {
-            "proj:shape": [1830, 1830],
-            "proj:transform": [60.0, 0.0, 500000.0, 0.0, -60.0, 5000000.0]
-          }
+            "scale": [6.0, 6.0],
+            "translation": [0.0, 0.0]
+          },
+          "proj:transform": [60.0, 0.0, 500000.0, 0.0, -60.0, 5000000.0],
+          "proj:shape": [1830, 1830]
         },
         {
           "asset": "r120m",
           "derived_from": "r60m",
           "transform": {
-            "proj:shape": [915, 915],
-            "proj:transform": [120.0, 0.0, 500000.0, 0.0, -120.0, 5000000.0]
-          }
+            "scale": [2.0, 2.0],
+            "translation": [0.0, 0.0]
+          },
+          "proj:transform": [120.0, 0.0, 500000.0, 0.0, -120.0, 5000000.0],
+          "proj:shape": [915, 915]
         },
         {
           "asset": "r360m",
           "derived_from": "r120m",
           "transform": {
-            "proj:shape": [305, 305],
-            "proj:transform": [360.0, 0.0, 500000.0, 0.0, -360.0, 5000000.0]
-          }
+            "scale": [3.0, 3.0],
+            "translation": [0.0, 0.0]
+          },
+          "proj:transform": [360.0, 0.0, 500000.0, 0.0, -360.0, 5000000.0],
+          "proj:shape": [305, 305]
         },
         {
           "asset": "r720m",
           "derived_from": "r360m",
           "transform": {
-            "proj:shape": [153, 153],
-            "proj:transform": [720.0, 0.0, 500000.0, 0.0, -720.0, 5000000.0]
-          }
+            "scale": [2.0, 2.0],
+            "translation": [0.0, 0.0]
+          },
+          "proj:transform": [720.0, 0.0, 500000.0, 0.0, -720.0, 5000000.0],
+          "proj:shape": [153, 153]
         }
       ]
     },

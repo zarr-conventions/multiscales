@@ -26,18 +26,18 @@
                     "asset": "0",
                     "transform": {
                         "scale": [1.0, 1.0],
-                        "translation": [0.0, 0.0],
-                        "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0]
-                    }
+                        "translation": [0.0, 0.0]
+                    },
+                    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0]
                 },
                 {
                     "asset": "1",
                     "derived_from": "0",
                     "transform": {
                         "scale": [2.0, 2.0],
-                        "translation": [0.0, 0.0],
-                        "proj:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0]
+                        "translation": [0.0, 0.0]
                     },
+                    "proj:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0],
                     "resampling_method": "average"
                 },
                 {
@@ -45,9 +45,9 @@
                     "derived_from": "1",
                     "transform": {
                         "scale": [4.0, 4.0],
-                        "translation": [0.0, 0.0],
-                        "proj:transform": [40.0, 0.0, 500000.0, 0.0, -40.0, 5000000.0]
+                        "translation": [0.0, 0.0]
                     },
+                    "proj:transform": [40.0, 0.0, 500000.0, 0.0, -40.0, 5000000.0],
                     "resampling_method": "average"
                 }
             ],
