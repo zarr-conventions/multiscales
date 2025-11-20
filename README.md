@@ -133,7 +133,7 @@ multiscales/
     └── data
 ```
 
-**Array-based layout**:
+**Nested array layout**:
 ```json
 {
   "layout": [
