@@ -5,24 +5,21 @@
   "description": "Schema for multiscale pyramid information in Zarr. Properties define the hierarchical layout and transformations.",
   "type": "object",
   "properties": {
-    "version": {
-      "type": "string",
-      "description": "Multiscales metadata version",
-      "pattern": "^0\\.1\\.0$"
-    },
     "layout": {
       "type": "array",
       "description": "Array of objects representing the pyramid layout and transformation relationships",
       "items": {
         "type": "object",
         "properties": {
-          "group": {
+          "asset": {
             "type": "string",
-            "description": "Group name for this resolution level"
+            "description": "Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., '0') for a child group, or a path with '/' separator for nested groups or arrays (e.g., '0/data' for an array within a group)",
+            "pattern": "^(?!/)(?!.*(\\.\\.))([^/]+(/[^/]+)*)$"
           },
-          "from_group": {
+          "derived_from": {
             "type": "string",
-            "description": "Source group used to generate this level"
+            "description": "Path to the source Zarr group or array used to generate this level. Uses the same path syntax as 'asset' with '/' separator for nested resources",
+            "pattern": "^(?!/)(?!.*(\\.\\.))([^/]+(/[^/]+)*)$"
           },
           "factors": {
             "type": "array",
@@ -50,9 +47,9 @@
             "description": "Resampling method for this specific level"
           }
         },
-        "required": ["group", "scale"],
+        "required": ["asset", "scale"],
         "if": {
-          "required": ["from_group"]
+          "required": ["derived_from"]
         },
         "then": {
           "required": ["scale"]
@@ -66,6 +63,6 @@
       "description": "Default resampling method used for downsampling"
     }
   },
-  "required": ["version", "layout"],
+  "required": ["layout"],
   "additionalProperties": true
 }

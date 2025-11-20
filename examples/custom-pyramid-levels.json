@@ -15,22 +15,22 @@
         "multiscales": {
             "layout": [
                 {
-                    "group": "full",
+                    "asset": "full",
                     "scale": [1.0, 1.0]
                 },
                 {
-                    "group": "half",
-                    "from_group": "full",
+                    "asset": "half",
+                    "derived_from": "full",
                     "scale": [2.0, 2.0]
                 },
                 {
-                    "group": "quarter",
-                    "from_group": "half",
+                    "asset": "quarter",
+                    "derived_from": "half",
                     "scale": [4.0, 4.0]
                 },
                 {
-                    "group": "eighth",
-                    "from_group": "quarter",
+                    "asset": "eighth",
+                    "derived_from": "quarter",
                     "scale": [8.0, 8.0]
                 }
             ]

@@ -15,21 +15,21 @@
         "multiscales": {
             "layout": [
                 {
-                    "asset": "0",
+                    "asset": "0/data",
                     "scale": [1.0, 1.0]
                 },
                 {
-                    "asset": "1",
-                    "derived_from": "0",
+                    "asset": "1/data",
+                    "derived_from": "0/data",
                     "scale": [2.0, 2.0],
-                    "translation": [0.0, 0.0],
+                    "translation": [0.5, 0.5],
                     "resampling_method": "average"
                 },
                 {
-                    "asset": "2",
-                    "derived_from": "1",
-                    "scale": [4.0, 4.0],
-                    "translation": [0.0, 0.0],
+                    "asset": "2/data",
+                    "derived_from": "1/data",
+                    "scale": [2.0, 2.0],
+                    "translation": [0.5, 0.5],
                     "resampling_method": "average"
                 }
             ],

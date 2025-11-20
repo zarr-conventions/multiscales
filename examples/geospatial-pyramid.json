@@ -23,19 +23,19 @@
             "version": "0.1.0",
             "layout": [
                 {
-                    "group": "0",
+                    "asset": "0",
                     "scale": [1.0, 1.0]
                 },
                 {
-                    "group": "1",
-                    "from_group": "0",
+                    "asset": "1",
+                    "derived_from": "0",
                     "scale": [2.0, 2.0],
                     "translation": [0.0, 0.0],
                     "resampling_method": "average"
                 },
                 {
-                    "group": "2",
-                    "from_group": "1",
+                    "asset": "2",
+                    "derived_from": "1",
                     "scale": [4.0, 4.0],
                     "translation": [0.0, 0.0],
                     "resampling_method": "average"
