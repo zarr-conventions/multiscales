@@ -133,6 +133,23 @@ multiscales/
     └── data
 ```
 
+**Direct array layout** (COG-style):
+```json
+{
+  "layout": [
+    {"asset": "0", "scale": [1.0, 1.0]},
+    {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
+  ]
+}
+```
+Structure:
+```
+multiscales/
+├── 0            # Zarr Array referenced by asset: "0"
+└── 1            # Zarr Array referenced by asset: "1"
+```
+This pattern is a natural translation of COG (Cloud Optimized GeoTIFF) overviews to Zarr, where each level is stored as a separate array.
+
 **Nested array layout**:
 ```json
 {
