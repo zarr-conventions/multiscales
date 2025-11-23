@@ -23,7 +23,7 @@
           },
           "transform": {
             "type": "object",
-            "description": "Transformation parameters describing the coordinate transformation for this level. Contains relative transformation parameters (scale, translation, factors). Absolute positioning parameters should be placed at the layout entry level, outside this object.",
+            "description": "Transformation parameters describing the coordinate transformation for this level. Contains relative transformation parameters (scale, translation). Absolute positioning parameters should be placed at the layout entry level, outside this object.",
             "properties": {
               "scale": {
                 "type": "array",

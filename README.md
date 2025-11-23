@@ -387,7 +387,7 @@ This specification uses semantic versioning (SemVer) for version management:
 The `transform` object explicitly captures the **relative** coordinate transformation between resolution levels. This approach has several advantages:
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
-2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object contains relative transformation parameters (scale, translation, factors)
+2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object contains relative transformation parameters (scale, translation)
 3. **Composability**: Domain-specific coordinate systems can build upon these transformations. Absolute positioning information (e.g., `proj:transform` for geospatial data) is placed at the layout entry level, outside the transform object
 4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
 5. **Clarity**: Separating relative transformations (inside `transform`) from absolute positioning (outside `transform`) makes the intent clear and avoids confusion
