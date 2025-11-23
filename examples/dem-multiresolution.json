@@ -44,9 +44,9 @@
                     "derived_from": "dem_90m",
                     "transform": {
                         "scale": [3.0, 3.0],
-                        "translation": [0.0, 0.0],
-                        "proj:transform": [0.0025, 0.0, -180.0, 0.0, -0.0025, 90.0]
+                        "translation": [0.0, 0.0]
                     },
+                    "proj:transform": [0.0025, 0.0, -180.0, 0.0, -0.0025, 90.0],
                     "resampling_method": "average"
                 },
                 {
