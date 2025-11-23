@@ -86,7 +86,7 @@ Each object in the layout array represents a single resolution level with the fo
 | --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | **asset**             | `string`   | Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., `"0"`) for a child group, or a path with `/` separator for nested groups or arrays (e.g., `"0/data"` for an array within a group) | &#10003; Yes                              |
 | **derived_from**      | `string`   | Path to the source Zarr group or array used to generate this level. Uses the same path syntax as `asset` with `/` separator for nested resources | No                                        |
-| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `from_group` is present) |
+| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `derived_from ` is present) |
 | **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
 
 Additional properties are allowed.
