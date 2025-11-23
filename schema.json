@@ -47,7 +47,7 @@
             "description": "Default resampling method used for resampling data"
           }
         },
-        "required": ["asset", "scale"],
+        "required": ["asset"],
         "if": {
           "required": ["derived_from"]
         },
