@@ -57,7 +57,6 @@
                         "translation": [0.0, 0.0]
                     },
                     "proj:transform": [0.000092593, 0.0, -180.0, 0.0, -0.000092593, 90.0],
-                    "resampling_method": "cubic"
                 }
             ],
             "resampling_method": "cubic"
