@@ -21,38 +21,38 @@
             "description": "Path to the source Zarr group or array used to generate this level. Uses the same path syntax as 'asset' with '/' separator for nested resources",
             "pattern": "^(?!/)(?!.*(\\.\\.))([^/]+(/[^/]+)*)$"
           },
-          "factors": {
-            "type": "array",
-            "description": "Array of decimation factors per axis (e.g., `[2, 2]` for 2x decimation)",
-            "items": {
-              "type": "number"
-            }
-          },
-          "scale": {
-            "type": "array",
-            "description": "Array of scale factors per axis describing the resolution change from the derived group",
-            "items": {
-              "type": "number"
-            }
-          },
-          "translation": {
-            "type": "array",
-            "description": "Array of translation offsets per axis in the coordinate space",
-            "items": {
-              "type": "number"
-            }
+          "transform": {
+            "type": "object",
+            "description": "Transformation parameters describing the coordinate transformation for this level. Contains relative transformation parameters (scale, translation). Absolute positioning parameters should be placed at the layout entry level, outside this object.",
+            "properties": {
+              "scale": {
+                "type": "array",
+                "description": "Array of scale factors per axis describing the coordinate transformation from the source level (derived_from) to this level",
+                "items": {
+                  "type": "number"
+                }
+              },
+              "translation": {
+                "type": "array",
+                "description": "Array of translation offsets per axis in the coordinate space",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "additionalProperties": true
           },
           "resampling_method": {
             "type": "string",
-            "description": "Resampling method for this specific level"
+            "description": "Default resampling method used for resampling data"
           }
         },
-        "required": ["asset", "scale"],
+        "required": ["asset"],
         "if": {
           "required": ["derived_from"]
         },
         "then": {
-          "required": ["scale"]
+          "required": ["transform"]
         },
         "additionalProperties": true
       },

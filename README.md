@@ -76,17 +76,7 @@ This field SHALL describe the pyramid hierarchy with an array of objects represe
 
 Each level can optionally reference another level via `derived_from`, establishing a directed graph of resolution relationships. Levels can be derived through either downsampling (scale > 1.0) or upsampling (scale < 1.0) from their source asset.
 
-**Transformation Semantics**:
-
-The `scale` and `translation` parameters describe the coordinate transformation from the source level (`derived_from`) to the current level. Specifically:
-
-- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
-  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
-  - Scale = 1.0: No scaling (same coordinate space)
-  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
-- **Translation** represents the coordinate offset applied in the current level's coordinate space
-
-These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
+The `transform` object on each level describes the coordinate transformation between resolution levels. See the [Transform Object](#transform-object) section for details on how to specify transformations.
 
 ### Layout Object
 
@@ -96,9 +86,7 @@ Each object in the layout array represents a single resolution level with the fo
 | --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | **asset**             | `string`   | Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., `"0"`) for a child group, or a path with `/` separator for nested groups or arrays (e.g., `"0/data"` for an array within a group) | &#10003; Yes                              |
 | **derived_from**      | `string`   | Path to the source Zarr group or array used to generate this level. Uses the same path syntax as `asset` with `/` separator for nested resources | No                                        |
-| **factors**           | `number[]` | Array of resampling factors per axis describing this level's resolution characteristics (e.g., `[2.0, 2.0]` indicates half the sampling rate in each dimension compared to a reference level) | No                                        |
-| **scale**             | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level | &#10003; Yes (if `derived_from` is present) |
-| **translation**       | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No                                        |
+| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `derived_from ` is present) |
 | **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
 
 Additional properties are allowed.
@@ -119,8 +107,8 @@ The `asset` and `derived_from` fields use Zarr path nomenclature to reference gr
 ```json
 {
   "layout": [
-    {"asset": "0", "scale": [1.0, 1.0]},
-    {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
+    {"asset": "0", "transform": {"scale": [1.0, 1.0]}},
+    {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0]}}
   ]
 }
 ```
@@ -137,8 +125,8 @@ multiscales/
 ```json
 {
   "layout": [
-    {"asset": "0", "scale": [1.0, 1.0]},
-    {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
+    {"asset": "0", "transform": {"scale": [1.0, 1.0]}},
+    {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0]}}
   ]
 }
 ```
@@ -154,7 +142,7 @@ This pattern is a natural translation of COG (Cloud Optimized GeoTIFF) overviews
 ```json
 {
   "layout": [
-    {"asset": "0/data", "scale": [1.0, 1.0]},
+    {"asset": "0/data", "transform": {"scale": [1.0, 1.0]}},
     {"asset": "1/data", "derived_from": "0/data", "scale": [2.0, 2.0]}
   ]
 }
@@ -192,6 +180,75 @@ multiscales/
 - **Consistency**: Use the same referencing style (group or array) throughout a layout
 - **Clarity**: For array-based layouts, include the full path to the array (e.g., `"0/data"`)
 - **Compatibility**: Group-based layouts are more common and may have better tool support
+
+### Transform Object
+
+The `transform` object provides a flexible mechanism to describe **relative** coordinate transformations between resolution levels. This object contains parameters that describe how to transform coordinates from a source level to the current level.
+
+#### Relative Transformations (inside `transform` object)
+
+For general-purpose transformations, the `transform` object MAY contain:
+
+|                   | Type       | Description                                                                                                                           | Required |
+| ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level        | No       |
+| **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
+
+**Example:**
+
+```json
+{
+  "asset": "1",
+  "derived_from": "0",
+  "transform": {
+    "scale": [2.0, 2.0],
+    "translation": [0.5, 0.5]
+  }
+}
+```
+
+#### Absolute Positioning (outside `transform` object)
+
+Absolute positioning information, such as geospatial coordinates, should be placed at the layout entry level, NOT inside the `transform` object. This makes it clear that these parameters describe the absolute position of the level, not the relative transformation between levels.
+
+When combined with the `geo-proj` convention, layout entries MAY include:
+
+|                     | Type       | Description                                                                               | Required |
+| ------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
+| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters) describing absolute position   | No       |
+| **proj:shape**      | `number[]` | Shape of the raster in pixels [height, width]                                            | No       |
+
+**Example:**
+
+```json
+{
+  "asset": "r10m",
+  "transform": {
+    "scale": [1.0, 1.0],
+    "translation": [0.0, 0.0]
+  },
+  "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+  "proj:shape": [10000, 10000]
+}
+```
+
+**Note:** The `transform` object contains **relative** transformations (how to go from one level to another), while `proj:transform` and `proj:shape` describe **absolute** positioning in the coordinate reference system.
+
+#### Convention-Specific Transformations
+
+Other conventions MAY define their own transformation parameters. Relative transformation parameters should be placed inside the `transform` object, while absolute positioning parameters should be placed at the layout entry level. Implementations SHOULD document any convention-specific transformation parameters they introduce.
+
+**Transformation Semantics**:
+
+When `scale` and `translation` are used within the `transform` object:
+
+- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
+  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
+  - Scale = 1.0: No scaling (same coordinate space)
+  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
+- **Translation** represents the coordinate offset applied in the current level's coordinate space
+
+These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
 
 #### resampling_method
 
@@ -247,7 +304,6 @@ Consolidated metadata SHOULD be used for multiscale groups to ensure complete di
 ### Validation Rules
 
 - **Level Consistency**: Resolution level group names SHALL match children group path values in the `layout` array
-- **Transformation Consistency**: If both `factors` and `scale` are provided, they SHALL be consistent with each other
 
 ## Examples
 
@@ -292,8 +348,8 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
     },
     "multiscales": {
       "layout": [
-        {"asset": "0", "scale": [1.0, 1.0]},
-        {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
+        {"asset": "0", "transform": {"scale": [1.0, 1.0], "translation": [0.0, 0.0]}},
+        {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0], "translation": [0.0, 0.0]}}
       ]
     },
     "proj:code": "EPSG:32633",
@@ -326,42 +382,15 @@ This specification uses semantic versioning (SemVer) for version management:
 
 ## Implementation Notes
 
-### Scale and Translation Parameters
+### Transform Object
 
-The `scale` and `translation` parameters explicitly capture the coordinate transformation between resolution levels. This approach has several advantages:
+The `transform` object explicitly captures the **relative** coordinate transformation between resolution levels. This approach has several advantages:
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
-2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships
-3. **Composability**: Domain-specific coordinate systems can build upon these transformations
+2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object contains relative transformation parameters (scale, translation)
+3. **Composability**: Domain-specific coordinate systems can build upon these transformations. Absolute positioning information (e.g., `proj:transform` for geospatial data) is placed at the layout entry level, outside the transform object
 4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
-
-### Relationship Between `factors` and `scale`
-
-The `factors` and `scale` fields serve complementary purposes in describing resolution relationships:
-
-- **`scale`**: Describes the coordinate transformation from a specific source level (`derived_from`) to the current level. This is a pairwise relationship between two assets. For example, `derived_from: "level_10m"` with `scale: [2.0, 2.0]` means coordinates are multiplied by 2.0 when transforming from `level_10m` to the current level.
-
-- **`factors`**: Describes the resolution characteristics of a level, which can be interpreted relative to other levels in the pyramid. This is useful for documenting the overall resolution structure. For example, `factors: [1.0, 1.0]` might indicate the finest resolution in the collection, while `factors: [4.0, 4.0]` indicates a coarser resolution.
-
-**Consistency**: When both fields are present, they MUST be mathematically consistent with the pyramid structure. If multiple levels are chained via `derived_from` relationships, the cumulative product of `scale` values along a path should equal the ratio of `factors` values between the endpoints.
-
-**Example** with three levels:
-```json
-{
-  "layout": [
-    {"asset": "10m", "factors": [1.0, 1.0]},
-    {"asset": "20m", "derived_from": "10m", "scale": [2.0, 2.0], "factors": [2.0, 2.0]},
-    {"asset": "40m", "derived_from": "20m", "scale": [2.0, 2.0], "factors": [4.0, 4.0]}
-  ]
-}
-```
-
-In this example:
-- `20m` has `scale: [2.0, 2.0]` relative to `10m`, and `factors: [2.0, 2.0]`
-- `40m` has `scale: [2.0, 2.0]` relative to `20m`, and `factors: [4.0, 4.0]`
-- The cumulative scale from `10m` to `40m` is 2.0 × 2.0 = 4.0, matching the factors ratio (4.0 / 1.0)
-
-The `scale` field is the authoritative source for coordinate transformations between specific levels. The `factors` field provides convenient documentation of each level's resolution characteristics within the collection.
+5. **Clarity**: Separating relative transformations (inside `transform`) from absolute positioning (outside `transform`) makes the intent clear and avoids confusion
 
 ## References
 
