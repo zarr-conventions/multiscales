@@ -193,7 +193,6 @@ For general-purpose transformations, the `transform` object MAY contain:
 | ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level        | No       |
 | **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
-| **factors**       | `number[]` | Array of resampling factors per axis describing this level's resolution characteristics relative to a reference level                | No       |
 
 **Example:**
 
