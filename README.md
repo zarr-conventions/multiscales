@@ -107,7 +107,7 @@ The `asset` and `derived_from` fields use Zarr path nomenclature to reference gr
 ```json
 {
   "layout": [
-    {"asset": "0", "scale": [1.0, 1.0]},
+    {"asset": "0", "transform": {"scale": [1.0, 1.0]}},
     {"asset": "1", "derived_from": "0", "scale": [2.0, 2.0]}
   ]
 }
