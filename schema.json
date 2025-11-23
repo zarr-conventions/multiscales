@@ -27,7 +27,7 @@
             "properties": {
               "scale": {
                 "type": "array",
-                "description": "Array of scale factors per axis describing the resolution change from the derived group",
+                "description": "Array of scale factors per axis describing the coordinate transformation from the source level (derived_from) to this level",
                 "items": {
                   "type": "number"
                 }
