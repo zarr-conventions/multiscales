@@ -1,11 +1,11 @@
 # Multiscales Attribute Extension for Zarr
 
 - **UUID**: d35379db-88df-4056-af3a-620245f8e347
-- **Name**: Multiscales Attribute Extension
-- **Schema**: "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json"
+- **Name**: multiscales
+- **Schema URL**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json"
+- **Spec URL**: "https://github.com/zarr-conventions/multiscales/blob/v1/README.md"
 - **Extension Maturity Classification**: Proposal
-- **Owner**: @emmanuelmathot, @maxrjones
-- **Version** 0.1.0
+- **Owner**: @emmanuelmathot, @maxrjones, @d-v-b
 
 
 ## Description
@@ -329,23 +329,22 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
   "zarr_format": 3,
   "node_type": "group",
   "attributes": {
-    "zarr_conventions_version": "0.1.0",
-    "zarr_conventions": {
-      "d35379db-88df-4056-af3a-620245f8e347": {
-        "version": "0.1.0",
-        "schema": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json",
+    "zarr_conventions": [
+      {
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1/README.md",
+        "uuid": "d35379db-88df-4056-af3a-620245f8e347",
         "name": "multiscales",
-        "description": "Multiscale layout of zarr datasets",
-        "spec": "https://github.com/zarr-conventions/multiscales/blob/v0.1.0/README.md"
+        "description": "Multiscale layout of zarr datasets"
       },
-      "f17cb550-5864-4468-aeb7-f3180cfb622f": {
-        "version": "0.1.0",
-        "schema": "https://raw.githubusercontent.com/zarr-conventions/geo-proj/refs/tags/v0.1.0/schema.json",
-        "name": "geo-proj",
-        "description": "Coordinate reference system information for geospatial data",
-        "spec": "https://github.com/zarr-conventions/geo-proj/blob/v0.1.0/README.md"
+      {
+        "schema_url": "https://raw.githubusercontent.com/zarr-experimental/geo-proj/refs/tags/v1/schema.json",
+        "spec_url": "https://github.com/zarr-experimental/geo-proj/blob/v1/README.md",
+        "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
+        "name": "proj:",
+        "description": "Coordinate reference system information for geospatial data"
       }
-    },
+    ],
     "multiscales": {
       "layout": [
         {"asset": "0", "transform": {"scale": [1.0, 1.0], "translation": [0.0, 0.0]}},
