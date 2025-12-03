@@ -14,13 +14,10 @@ if (!schemaPath || !dataPath) {
 const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf8'));
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
-// Extract attributes for validation (if the data is a Zarr metadata file)
-const dataToValidate = data.attributes?.multiscales || data;
-
 // Validate
 const ajv = new Ajv({ allErrors: true });
 const validate = ajv.compile(schema);
-const valid = validate(dataToValidate);
+const valid = validate(data);
 
 if (valid) {
   console.log('✅ Validation successful!');
