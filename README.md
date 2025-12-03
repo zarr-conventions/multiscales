@@ -143,7 +143,7 @@ This pattern is a natural translation of COG (Cloud Optimized GeoTIFF) overviews
 {
   "layout": [
     {"asset": "0/data", "transform": {"scale": [1.0, 1.0]}},
-    {"asset": "1/data", "derived_from": "0/data", "scale": [2.0, 2.0]}
+    {"asset": "1/data", "derived_from": "0/data", "transform": {"scale": [2.0, 2.0]}}
   ]
 }
 ```
@@ -160,8 +160,8 @@ multiscales/
 ```json
 {
   "layout": [
-    {"asset": "resolutions/full", "scale": [1.0, 1.0]},
-    {"asset": "resolutions/half", "derived_from": "resolutions/full", "scale": [2.0, 2.0]}
+    {"asset": "resolutions/full", "transform": {"scale": [1.0, 1.0]}},
+    {"asset": "resolutions/half", "derived_from": "resolutions/full", "transform": {"scale": [2.0, 2.0]}}
   ]
 }
 ```
@@ -329,7 +329,6 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
   "zarr_format": 3,
   "node_type": "group",
   "attributes": {
-    "zarr_conventions_version": "0.1.0",
     "zarr_conventions": [
       {
         "uuid": "d35379db-88df-4056-af3a-620245f8e347",

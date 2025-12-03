@@ -2,7 +2,6 @@
   "zarr_format": 3,
   "node_type": "group",
   "attributes": {
-    "zarr_conventions_version": "0.1.0",
     "zarr_conventions": [
       {
         "uuid": "d35379db-88df-4056-af3a-620245f8e347",
