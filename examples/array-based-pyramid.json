@@ -3,33 +3,39 @@
     "node_type": "group",
     "attributes": {
         "zarr_conventions_version": "0.1.0",
-        "zarr_conventions": {
-            "d35379db-88df-4056-af3a-620245f8e347": {
-                "version": "0.1.0",
-                "schema": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json",
+        "zarr_conventions": [
+            {
+                "uuid": "d35379db-88df-4056-af3a-620245f8e347",
+                "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json",
+                "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v0.1.0/README.md",
                 "name": "multiscales",
-                "description": "Multiscale layout of zarr datasets",
-                "spec": "https://github.com/zarr-conventions/multiscales/blob/v0.1.0/README.md"
+                "description": "Multiscale layout of zarr datasets"
             }
-        },
+        ],
         "multiscales": {
             "layout": [
                 {
                     "asset": "0/data",
-                    "scale": [1.0, 1.0]
+                    "transform": {
+                        "scale": [1.0, 1.0]
+                    }
                 },
                 {
                     "asset": "1/data",
                     "derived_from": "0/data",
-                    "scale": [2.0, 2.0],
-                    "translation": [0.5, 0.5],
+                    "transform": {
+                        "scale": [2.0, 2.0],
+                        "translation": [0.5, 0.5]
+                    },
                     "resampling_method": "average"
                 },
                 {
                     "asset": "2/data",
                     "derived_from": "1/data",
-                    "scale": [2.0, 2.0],
-                    "translation": [0.5, 0.5],
+                    "transform": {
+                        "scale": [2.0, 2.0],
+                        "translation": [0.5, 0.5]
+                    },
                     "resampling_method": "average"
                 }
             ],
