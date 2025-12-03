@@ -2,7 +2,7 @@
 
 - **UUID**: d35379db-88df-4056-af3a-620245f8e347
 - **Name**: Multiscales Attribute Extension
-- **Schema**: "https://raw.githubusercontent.com/zarr-experimental/multiscales/refs/tags/v0.1.0/schema.json"
+- **Schema**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1.0/schema.json"
 - **Extension Maturity Classification**: Proposal
 - **Owner**: @emmanuelmathot, @maxrjones
 - **Version** 0.1.0

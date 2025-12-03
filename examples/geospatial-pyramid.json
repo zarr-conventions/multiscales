@@ -19,7 +19,6 @@
             }
         ],
         "multiscales": {
-            "version": "0.1.0",
             "layout": [
                 {
                     "asset": "0",
@@ -43,7 +42,7 @@
                     "asset": "2",
                     "derived_from": "1",
                     "transform": {
-                        "scale": [4.0, 4.0],
+                        "scale": [2.0, 2.0],
                         "translation": [0.0, 0.0]
                     },
                     "proj:transform": [40.0, 0.0, 500000.0, 0.0, -40.0, 5000000.0],
