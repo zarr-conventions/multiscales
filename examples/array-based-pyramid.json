@@ -1,44 +1,45 @@
 {
-    "zarr_format": 3,
-    "node_type": "group",
-    "attributes": {
-        "zarr_conventions": [
-            {
-                "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
-                "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1/README.md",
-                "uuid": "d35379db-88df-4056-af3a-620245f8e347",
-                "name": "multiscales",
-                "description": "Multiscale layout of zarr datasets"
-            }
-        ],
-        "multiscales": {
-            "layout": [
-                {
-                    "asset": "0/data",
-                    "transform": {
-                        "scale": [1.0, 1.0]
-                    }
-                },
-                {
-                    "asset": "1/data",
-                    "derived_from": "0/data",
-                    "transform": {
-                        "scale": [2.0, 2.0],
-                        "translation": [0.5, 0.5]
-                    },
-                    "resampling_method": "average"
-                },
-                {
-                    "asset": "2/data",
-                    "derived_from": "1/data",
-                    "transform": {
-                        "scale": [2.0, 2.0],
-                        "translation": [0.5, 0.5]
-                    },
-                    "resampling_method": "average"
-                }
-            ],
-            "resampling_method": "average"
+  "zarr_format": 3,
+  "node_type": "group",
+  "attributes": {
+    "zarr_conventions": [
+      {
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1.0.0/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1.0.0/README.md",
+        "uuid": "d35379db-88df-4056-af3a-620245f8e347",
+        "name": "multiscales",
+        "description": "Multiscale layout of zarr datasets"
+      }
+    ],
+    "multiscales": {
+      "version": "1.0.0",
+      "layout": [
+        {
+          "asset": "0/data",
+          "transform": {
+            "scale": [1.0, 1.0]
+          }
+        },
+        {
+          "asset": "1/data",
+          "derived_from": "0/data",
+          "transform": {
+            "scale": [2.0, 2.0],
+            "translation": [0.5, 0.5]
+          },
+          "resampling_method": "average"
+        },
+        {
+          "asset": "2/data",
+          "derived_from": "1/data",
+          "transform": {
+            "scale": [2.0, 2.0],
+            "translation": [0.5, 0.5]
+          },
+          "resampling_method": "average"
         }
+      ],
+      "resampling_method": "average"
     }
+  }
 }

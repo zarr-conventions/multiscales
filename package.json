@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "zarr-convention-metadata-template",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "scripts": {
     "test": "node test.js"
   },
