@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
+  "$id": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1.0.0/schema.json",
   "title": "Multiscales Convention",
   "description": "Schema for multiscale pyramid information in Zarr",
   "type": "object",
@@ -42,12 +42,12 @@
       "properties": {
         "schema_url": {
           "type": "string",
-          "const": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
+          "const": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1.0.0/schema.json",
           "description": "URL to the JSON Schema definition for this convention"
         },
         "spec_url": {
           "type": "string",
-          "const": "https://github.com/zarr-conventions/multiscales/blob/v1/README.md",
+          "const": "https://github.com/zarr-conventions/multiscales/blob/v1.0.0/README.md",
           "description": "URL to the full specification document"
         },
         "uuid": {
@@ -83,6 +83,11 @@
       "type": "object",
       "description": "Multiscales convention properties defining the hierarchical layout and transformations",
       "properties": {
+        "version": {
+          "type": "string",
+          "description": "Multiscales metadata version",
+          "pattern": "^1\\.0\\.0$"
+        },
         "layout": {
           "type": "array",
           "description": "Array of objects representing the pyramid layout and transformation relationships",
@@ -96,7 +101,7 @@
           "description": "Default resampling method used for downsampling"
         }
       },
-      "required": ["layout"],
+      "required": ["version", "layout"],
       "additionalProperties": true
     },
     "layoutObject": {

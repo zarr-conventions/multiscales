@@ -2,8 +2,8 @@
 
 - **UUID**: d35379db-88df-4056-af3a-620245f8e347
 - **Name**: multiscales
-- **Schema URL**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json"
-- **Spec URL**: "https://github.com/zarr-conventions/multiscales/blob/v1/README.md"
+- **Schema URL**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1.0.0/schema.json"
+- **Spec URL**: "https://github.com/zarr-conventions/multiscales/blob/v1.0.0/README.md"
 - **Extension Maturity Classification**: Proposal
 - **Owner**: @emmanuelmathot, @maxrjones, @d-v-b
 
@@ -56,14 +56,6 @@ The configuration in the Zarr convention metadata can be used in these parts of 
 ### Field Details
 
 Additional properties are allowed.
-
-#### version
-
-Multiscales metadata version
-
-* **Type**: `string`
-* **Required**: &#10003; Yes
-* **Pattern**: `^0\.1\.0$`
 
 #### layout
 
@@ -331,8 +323,8 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
   "attributes": {
     "zarr_conventions": [
       {
-        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
-        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1/README.md",
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1.0.0/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1.0.0/README.md",
         "uuid": "d35379db-88df-4056-af3a-620245f8e347",
         "name": "multiscales",
         "description": "Multiscale layout of zarr datasets"
