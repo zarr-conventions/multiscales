@@ -16,6 +16,13 @@
         "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
         "name": "proj:",
         "description": "Coordinate reference system information for geospatial data"
+      },
+      {
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
+        "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
+        "name": "spatial:",
+        "description": "Spatial coordinate information"
       }
     ],
     "multiscales": {
@@ -25,8 +32,8 @@
           "transform": {
             "scale": [1.0, 1.0]
           },
-          "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-          "proj:shape": [10980, 10980]
+          "spatial:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+          "spatial:shape": [10980, 10980]
         },
         {
           "asset": "r20m",
@@ -35,8 +42,8 @@
             "scale": [2.0, 2.0],
             "translation": [0.0, 0.0]
           },
-          "proj:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0],
-          "proj:shape": [5490, 5490]
+          "spatial:transform": [20.0, 0.0, 500000.0, 0.0, -20.0, 5000000.0],
+          "spatial:shape": [5490, 5490]
         },
         {
           "asset": "r60m",
@@ -45,8 +52,8 @@
             "scale": [6.0, 6.0],
             "translation": [0.0, 0.0]
           },
-          "proj:transform": [60.0, 0.0, 500000.0, 0.0, -60.0, 5000000.0],
-          "proj:shape": [1830, 1830]
+          "spatial:transform": [60.0, 0.0, 500000.0, 0.0, -60.0, 5000000.0],
+          "spatial:shape": [1830, 1830]
         },
         {
           "asset": "r120m",
@@ -55,8 +62,8 @@
             "scale": [2.0, 2.0],
             "translation": [0.0, 0.0]
           },
-          "proj:transform": [120.0, 0.0, 500000.0, 0.0, -120.0, 5000000.0],
-          "proj:shape": [915, 915]
+          "spatial:transform": [120.0, 0.0, 500000.0, 0.0, -120.0, 5000000.0],
+          "spatial:shape": [915, 915]
         },
         {
           "asset": "r360m",
@@ -65,8 +72,8 @@
             "scale": [3.0, 3.0],
             "translation": [0.0, 0.0]
           },
-          "proj:transform": [360.0, 0.0, 500000.0, 0.0, -360.0, 5000000.0],
-          "proj:shape": [305, 305]
+          "spatial:transform": [360.0, 0.0, 500000.0, 0.0, -360.0, 5000000.0],
+          "spatial:shape": [305, 305]
         },
         {
           "asset": "r720m",
@@ -75,13 +82,13 @@
             "scale": [2.0, 2.0],
             "translation": [0.0, 0.0]
           },
-          "proj:transform": [720.0, 0.0, 500000.0, 0.0, -720.0, 5000000.0],
-          "proj:shape": [153, 153]
+          "spatial:transform": [720.0, 0.0, 500000.0, 0.0, -720.0, 5000000.0],
+          "spatial:shape": [153, 153]
         }
       ]
     },
     "proj:code": "EPSG:32633",
-    "proj:spatial_dimensions": ["Y", "X"],
-    "proj:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
+    "spatial:dimensions": ["Y", "X"],
+    "spatial:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
   }
 }
