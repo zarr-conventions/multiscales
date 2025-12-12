@@ -18,7 +18,7 @@ This specification defines a JSON object that encodes multiscale pyramid informa
     - [Array-based Pyramid](examples/array-based-pyramid.json)
     - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
     - [DEM Multi-resolution with Upsampling](examples/dem-multiresolution.json)
-    - [Geospatial Pyramid with geo:proj](examples/geospatial-pyramid.json)
+    - [Geospatial Pyramid with spatial and proj](examples/geospatial-pyramid.json)
 
 ## Motivation
 
@@ -26,7 +26,7 @@ This specification defines a JSON object that encodes multiscale pyramid informa
 - Supports flexible resampling schemes for both downsampling and upsampling
 - Explicitly captures scale and translation transformations induced by resampling operations
 - Enables optimized data access patterns for visualization and analysis at different scales
-- Composable with domain-specific metadata (e.g., geo/proj for geospatial CRS information)
+- Composable with domain-specific metadata (e.g., spatial and proj for geospatial coordinate information)
 
 ## Background
 
@@ -211,12 +211,12 @@ For general-purpose transformations, the `transform` object MAY contain:
 
 Absolute positioning information, such as geospatial coordinates, should be placed at the layout entry level, NOT inside the `transform` object. This makes it clear that these parameters describe the absolute position of the level, not the relative transformation between levels.
 
-When combined with the `geo-proj` convention, layout entries MAY include:
+When combined with the `spatial:` convention, layout entries MAY include:
 
-|                     | Type       | Description                                                                               | Required |
-| ------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
-| **proj:transform**  | `number[]` | Affine transformation matrix in GDAL format (6 parameters) describing absolute position   | No       |
-| **proj:shape**      | `number[]` | Shape of the raster in pixels [height, width]                                            | No       |
+|                       | Type       | Description                                                                               | Required |
+| --------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
+| **spatial:transform** | `number[]` | Affine transformation matrix (6 parameters) describing absolute position                  | No       |
+| **spatial:shape**     | `number[]` | Shape of the raster in pixels [height, width]                                             | No       |
 
 **Example:**
 
@@ -227,12 +227,12 @@ When combined with the `geo-proj` convention, layout entries MAY include:
     "scale": [1.0, 1.0],
     "translation": [0.0, 0.0]
   },
-  "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-  "proj:shape": [10000, 10000]
+  "spatial:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+  "spatial:shape": [10000, 10000]
 }
 ```
 
-**Note:** The `transform` object contains **relative** transformations (how to go from one level to another), while `proj:transform` and `proj:shape` describe **absolute** positioning in the coordinate reference system.
+**Note:** The `transform` object contains **relative** transformations (how to go from one level to another), while `spatial:transform` and `spatial:shape` describe **absolute** positioning in the coordinate space.
 
 #### Convention-Specific Transformations
 
@@ -322,7 +322,7 @@ This generic multiscales specification is designed to be composed with domain-sp
 
 ### Geospatial Data
 
-For geospatial data, combine with `proj:*` attributes from [`geo-proj` convention](https://github.com/zarr-conventions/geo-proj) to specify the Coordinate Reference System:
+For geospatial data, combine with `proj:*` attributes from the [`geo-proj` convention](https://github.com/zarr-conventions/geo-proj) for CRS information and `spatial:*` attributes from the [`spatial` convention](https://github.com/zarr-conventions/spatial) for coordinate transformation:
 
 ```json
 {
@@ -343,6 +343,13 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
         "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
         "name": "proj:",
         "description": "Coordinate reference system information for geospatial data"
+      },
+      {
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
+        "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
+        "name": "spatial:",
+        "description": "Spatial coordinate information"
       }
     ],
     "multiscales": {
@@ -352,14 +359,14 @@ For geospatial data, combine with `proj:*` attributes from [`geo-proj` conventio
       ]
     },
     "proj:code": "EPSG:32633",
-    "proj:spatial_dimensions": ["Y", "X"],
-    "proj:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
-    "proj:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
+    "spatial:dimensions": ["Y", "X"],
+    "spatial:transform": [10.0, 0.0, 500000.0, 0.0, -10.0, 5000000.0],
+    "spatial:bbox": [500000.0, 4900000.0, 600000.0, 5000000.0]
   }
 }
 ```
 
-At each resolution level, the `proj:*` metadata can be overridden with level-specific values as needed.
+At each resolution level, the `spatial:*` metadata can be overridden with level-specific values as needed (e.g., `spatial:transform` and `spatial:shape` for each resolution level).
 
 ### Bioimaging Data
 
@@ -387,7 +394,7 @@ The `transform` object explicitly captures the **relative** coordinate transform
 
 1. **Explicit vs. Implicit**: Clients don't need to infer transformations from resampling factors; the exact coordinate mapping is specified
 2. **Flexibility**: Supports arbitrary resampling schemes (both downsampling and upsampling) with precise coordinate relationships. The transform object contains relative transformation parameters (scale, translation)
-3. **Composability**: Domain-specific coordinate systems can build upon these transformations. Absolute positioning information (e.g., `proj:transform` for geospatial data) is placed at the layout entry level, outside the transform object
+3. **Composability**: Domain-specific coordinate systems can build upon these transformations. Absolute positioning information (e.g., `spatial:transform` for geospatial data) is placed at the layout entry level, outside the transform object
 4. **Graph Structure**: Allows flexible pyramid topologies where any level can reference any other level via `derived_from`
 5. **Clarity**: Separating relative transformations (inside `transform`) from absolute positioning (outside `transform`) makes the intent clear and avoids confusion
 
