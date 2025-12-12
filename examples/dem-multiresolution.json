@@ -16,6 +16,13 @@
                 "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
                 "name": "proj:",
                 "description": "Coordinate reference system information for geospatial data"
+            },
+            {
+                "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json",
+                "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
+                "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
+                "name": "spatial:",
+                "description": "Spatial coordinate information"
             }
         ],
         "multiscales": {
@@ -26,7 +33,7 @@
                         "scale": [1.0, 1.0],
                         "translation": [0.0, 0.0]
                     },
-                    "proj:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0]
+                    "spatial:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0]
                 },
                 {
                     "asset": "dem_90m",
@@ -35,7 +42,7 @@
                         "scale": [3.0, 3.0],
                         "translation": [0.0, 0.0]
                     },
-                    "proj:transform": [0.000833334, 0.0, -180.0, 0.0, -0.000833334, 90.0],
+                    "spatial:transform": [0.000833334, 0.0, -180.0, 0.0, -0.000833334, 90.0],
                     "resampling_method": "average"
                 },
                 {
@@ -45,7 +52,7 @@
                         "scale": [3.0, 3.0],
                         "translation": [0.0, 0.0]
                     },
-                    "proj:transform": [0.0025, 0.0, -180.0, 0.0, -0.0025, 90.0],
+                    "spatial:transform": [0.0025, 0.0, -180.0, 0.0, -0.0025, 90.0],
                     "resampling_method": "average"
                 },
                 {
@@ -55,14 +62,14 @@
                         "scale": [0.333, 0.333],
                         "translation": [0.0, 0.0]
                     },
-                    "proj:transform": [0.000092593, 0.0, -180.0, 0.0, -0.000092593, 90.0]
+                    "spatial:transform": [0.000092593, 0.0, -180.0, 0.0, -0.000092593, 90.0]
                 }
             ],
             "resampling_method": "cubic"
         },
         "proj:code": "EPSG:4326",
-        "proj:spatial_dimensions": ["latitude", "longitude"],
-        "proj:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0],
-        "proj:bbox": [-180.0, -90.0, 180.0, 90.0]
+        "spatial:dimensions": ["latitude", "longitude"],
+        "spatial:transform": [0.000277778, 0.0, -180.0, 0.0, -0.000277778, 90.0],
+        "spatial:bbox": [-180.0, -90.0, 180.0, 90.0]
     }
 }
