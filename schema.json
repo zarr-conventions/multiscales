@@ -66,17 +66,7 @@
           "description": "Brief description of the convention's purpose and usage"
         }
       },
-      "anyOf": [
-        {
-          "required": ["schema_url"]
-        },
-        {
-          "required": ["spec_url"]
-        },
-        {
-          "required": ["uuid"]
-        }
-      ],
+      "required": ["uuid"],
       "additionalProperties": false
     },
     "multiscalesProperties": {
