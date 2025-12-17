@@ -57,14 +57,6 @@ The configuration in the Zarr convention metadata can be used in these parts of 
 
 Additional properties are allowed.
 
-#### version
-
-Multiscales metadata version
-
-* **Type**: `string`
-* **Required**: &#10003; Yes
-* **Pattern**: `^0\.1\.0$`
-
 #### layout
 
 Array of objects representing the pyramid layout and transformation relationships
