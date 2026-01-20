@@ -126,7 +126,7 @@
             },
             "translation": {
               "type": "array",
-              "description": "Array of translation offsets per axis in the coordinate space",
+              "description": "Array of translation offsets per axis applied AFTER scaling. The transformation formula is: X_cur = X_source * scale + translation. For standard pyramids with the same origin, this should be [0.0, 0.0].",
               "items": {
                 "type": "number"
               }

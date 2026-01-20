@@ -7,18 +7,17 @@
 - **Extension Maturity Classification**: Proposal
 - **Owner**: @emmanuelmathot, @maxrjones, @d-v-b
 
-
 ## Description
 
 This specification defines a JSON object that encodes multiscale pyramid information for data stored in Zarr groups under the `multiscales` key in the attributes of Zarr groups. This is a domain-agnostic specification that describes the hierarchical layout of Zarr groups representing different resolution levels and the transformations between them.
 
 - Examples:
-    - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
-    - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
-    - [Array-based Pyramid](examples/array-based-pyramid.json)
-    - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
-    - [DEM Multi-resolution with Upsampling](examples/dem-multiresolution.json)
-    - [Geospatial Pyramid with spatial and proj](examples/geospatial-pyramid.json)
+  - [Simple Power-of-2 Pyramid](examples/power-of-2-pyramid.json)
+  - [Custom Pyramid Levels](examples/custom-pyramid-levels.json)
+  - [Array-based Pyramid](examples/array-based-pyramid.json)
+  - [Sentinel-2 Multi-resolution](examples/sentinel-2-multiresolution.json)
+  - [DEM Multi-resolution with Upsampling](examples/dem-multiresolution.json)
+  - [Geospatial Pyramid with spatial and proj](examples/geospatial-pyramid.json)
 
 ## Motivation
 
@@ -61,8 +60,8 @@ Additional properties are allowed.
 
 Array of objects representing the pyramid layout and transformation relationships
 
-* **Type**: `object[]`
-* **Required**: &#10003; Yes
+- **Type**: `object[]`
+- **Required**: &#10003; Yes
 
 This field SHALL describe the pyramid hierarchy with an array of objects representing each resolution level. See the [Layout Object](#layout-object) section below for details.
 
@@ -74,12 +73,12 @@ The `transform` object on each level describes the coordinate transformation bet
 
 Each object in the layout array represents a single resolution level with the following properties:
 
-|                       | Type       | Description                                                                                                                           | Required                                  |
-| --------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **asset**             | `string`   | Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., `"0"`) for a child group, or a path with `/` separator for nested groups or arrays (e.g., `"0/data"` for an array within a group) | &#10003; Yes                              |
-| **derived_from**      | `string`   | Path to the source Zarr group or array used to generate this level. Uses the same path syntax as `asset` with `/` separator for nested resources | No                                        |
-| **transform**         | `object`   | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details | &#10003; Yes (if `derived_from ` is present) |
-| **resampling_method** | `string`   | Resampling method for this specific level                                                                                             | No                                        |
+|                       | Type     | Description                                                                                                                                                                                                              | Required                                     |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------- |
+| **asset**             | `string` | Path to the Zarr group or array for this resolution level. Can be a simple name (e.g., `"0"`) for a child group, or a path with `/` separator for nested groups or arrays (e.g., `"0/data"` for an array within a group) | &#10003; Yes                                 |
+| **derived_from**      | `string` | Path to the source Zarr group or array used to generate this level. Uses the same path syntax as `asset` with `/` separator for nested resources                                                                         | No                                           |
+| **transform**         | `object` | Transformation parameters describing the coordinate transformation for this level. See [Transform Object](#transform-object) for details                                                                                 | &#10003; Yes (if `derived_from ` is present) |
+| **resampling_method** | `string` | Resampling method for this specific level                                                                                                                                                                                | No                                           |
 
 Additional properties are allowed.
 
@@ -96,15 +95,18 @@ The `asset` and `derived_from` fields use Zarr path nomenclature to reference gr
 #### Common Patterns
 
 **Group-based layout** (most common):
+
 ```json
 {
   "layout": [
-    {"asset": "0", "transform": {"scale": [1.0, 1.0]}},
-    {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0]}}
+    { "asset": "0", "transform": { "scale": [1.0, 1.0] } },
+    { "asset": "1", "derived_from": "0", "transform": { "scale": [2.0, 2.0] } }
   ]
 }
 ```
+
 Structure:
+
 ```
 multiscales/
 ├── 0/           # Referenced by asset: "0"
@@ -114,32 +116,43 @@ multiscales/
 ```
 
 **Direct array layout** (COG-style):
+
 ```json
 {
   "layout": [
-    {"asset": "0", "transform": {"scale": [1.0, 1.0]}},
-    {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0]}}
+    { "asset": "0", "transform": { "scale": [1.0, 1.0] } },
+    { "asset": "1", "derived_from": "0", "transform": { "scale": [2.0, 2.0] } }
   ]
 }
 ```
+
 Structure:
+
 ```
 multiscales/
 ├── 0            # Zarr Array referenced by asset: "0"
 └── 1            # Zarr Array referenced by asset: "1"
 ```
+
 This pattern is a natural translation of COG (Cloud Optimized GeoTIFF) overviews to Zarr, where each level is stored as a separate array.
 
 **Nested array layout**:
+
 ```json
 {
   "layout": [
-    {"asset": "0/data", "transform": {"scale": [1.0, 1.0]}},
-    {"asset": "1/data", "derived_from": "0/data", "transform": {"scale": [2.0, 2.0]}}
+    { "asset": "0/data", "transform": { "scale": [1.0, 1.0] } },
+    {
+      "asset": "1/data",
+      "derived_from": "0/data",
+      "transform": { "scale": [2.0, 2.0] }
+    }
   ]
 }
 ```
+
 Structure:
+
 ```
 multiscales/
 ├── 0/
@@ -149,15 +162,22 @@ multiscales/
 ```
 
 **Nested group layout**:
+
 ```json
 {
   "layout": [
-    {"asset": "resolutions/full", "transform": {"scale": [1.0, 1.0]}},
-    {"asset": "resolutions/half", "derived_from": "resolutions/full", "transform": {"scale": [2.0, 2.0]}}
+    { "asset": "resolutions/full", "transform": { "scale": [1.0, 1.0] } },
+    {
+      "asset": "resolutions/half",
+      "derived_from": "resolutions/full",
+      "transform": { "scale": [2.0, 2.0] }
+    }
   ]
 }
 ```
+
 Structure:
+
 ```
 multiscales/
 └── resolutions/
@@ -181,10 +201,10 @@ The `transform` object provides a flexible mechanism to describe **relative** co
 
 For general-purpose transformations, the `transform` object MAY contain:
 
-|                   | Type       | Description                                                                                                                           | Required |
-| ----------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| **scale**         | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level        | No       |
-| **translation**   | `number[]` | Array of translation offsets per axis in the coordinate space                                                                         | No       |
+|                 | Type       | Description                                                                                                                   | Required |
+| --------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- | -------- |
+| **scale**       | `number[]` | Array of scale factors per axis describing the coordinate transformation from the source level (`derived_from`) to this level | No       |
+| **translation** | `number[]` | Array of translation offsets per axis, applied **after** scaling (formula: `X_cur = X_source * scale + translation`)          | No       |
 
 **Example:**
 
@@ -205,10 +225,10 @@ Absolute positioning information, such as geospatial coordinates, should be plac
 
 When combined with the `spatial:` convention, layout entries MAY include:
 
-|                       | Type       | Description                                                                               | Required |
-| --------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
-| **spatial:transform** | `number[]` | Affine transformation matrix (6 parameters) describing absolute position                  | No       |
-| **spatial:shape**     | `number[]` | Shape of the raster in pixels [height, width]                                             | No       |
+|                       | Type       | Description                                                              | Required |
+| --------------------- | ---------- | ------------------------------------------------------------------------ | -------- |
+| **spatial:transform** | `number[]` | Affine transformation matrix (6 parameters) describing absolute position | No       |
+| **spatial:shape**     | `number[]` | Shape of the raster in pixels [height, width]                            | No       |
 
 **Example:**
 
@@ -232,13 +252,54 @@ Other conventions MAY define their own transformation parameters. Relative trans
 
 **Transformation Semantics**:
 
-When `scale` and `translation` are used within the `transform` object:
+When `scale` and `translation` are used within the `transform` object, the transformation from source level coordinates to current level coordinates follows this formula:
 
-- **Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
-  - Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
-  - Scale = 1.0: No scaling (same coordinate space)
-  - Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
-- **Translation** represents the coordinate offset applied in the current level's coordinate space
+$$
+X_{cur} = X_{source} \times scale + translation
+$$
+
+Where:
+
+- $X_{source}$ is the coordinate (e.g., pixel index) in the source level (`derived_from`)
+- $X_{cur}$ is the corresponding coordinate in the current level
+- $scale$ is the scale factor for that axis
+- $translation$ is the translation offset for that axis (in current level units)
+
+> **Design Note**: This formula follows the standard affine transformation convention (scale-then-translate) used by OME-NGFF and most imaging libraries. An alternative convention `X_cur = (X_source + translation) × scale` where translation is expressed in source pixel units was considered. The chosen formula provides consistency with existing multiscale specifications but requires translation values in current-level coordinate space.
+
+**Scale** represents the multiplicative factor applied to coordinates when transforming from the source level to the current level:
+
+- Scale > 1.0: Coordinates expand (e.g., scale of 2.0 means coordinate [10, 20] in source becomes [20, 40] in current level)
+- Scale = 1.0: No scaling (same coordinate space)
+- Scale < 1.0: Coordinates contract (e.g., scale of 0.5 means coordinate [10, 20] in source becomes [5, 10] in current level)
+
+**Translation** represents the coordinate offset applied **after** scaling, in the current level's coordinate space.
+
+**Important Note on Translation Values**:
+
+When the spatial origin (e.g., `spatial:transform` upper-left corner) remains unchanged between resolution levels, the `translation` should typically be `[0.0, 0.0]`. Non-zero translation values are only needed when there is a coordinate offset between levels, such as:
+
+- Different pixel-center vs. pixel-corner conventions between levels
+- Cropped or shifted extents between levels
+
+For a standard pyramid where all levels share the same origin, use `translation: [0.0, 0.0]`.
+
+**Example - Standard pyramid (same origin)**:
+
+If level "0" has 1000×1000 pixels at 10m resolution and level "1" is derived by 2× downsampling to 500×500 pixels at 20m resolution with the same origin:
+
+```json
+{
+  "asset": "1",
+  "derived_from": "0",
+  "transform": {
+    "scale": [2.0, 2.0],
+    "translation": [0.0, 0.0]
+  }
+}
+```
+
+Pixel [100, 200] in level "0" corresponds to pixel [200, 400] in level "1"'s coordinate space (before rounding to the actual grid).
 
 These transformations allow clients to map coordinates between levels and determine spatial extents without needing to understand the specific resampling algorithm.
 
@@ -246,8 +307,8 @@ These transformations allow clients to map coordinates between levels and determ
 
 Resampling method used for resampling operations (downsampling or upsampling)
 
-* **Type**: `string`
-* **Required**: No
+- **Type**: `string`
+- **Required**: No
 
 The resampling method can be any string value describing the algorithm used for resampling. Common methods for downsampling include `"nearest"`, `"average"`, `"bilinear"`, `"cubic"`, `"cubic_spline"`, `"lanczos"`, `"mode"`, `"max"`, `"min"`, `"med"`, `"sum"`, `"q1"`, `"q3"`, `"rms"`, `"gauss"`. For upsampling, methods like `"nearest"`, `"bilinear"`, `"cubic"`, `"lanczos"` are commonly used. Any method can be specified to support emerging resampling techniques.
 
@@ -346,8 +407,15 @@ For geospatial data, combine with `proj:*` attributes from the [`geo-proj` conve
     ],
     "multiscales": {
       "layout": [
-        {"asset": "0", "transform": {"scale": [1.0, 1.0], "translation": [0.0, 0.0]}},
-        {"asset": "1", "derived_from": "0", "transform": {"scale": [2.0, 2.0], "translation": [0.0, 0.0]}}
+        {
+          "asset": "0",
+          "transform": { "scale": [1.0, 1.0], "translation": [0.0, 0.0] }
+        },
+        {
+          "asset": "1",
+          "derived_from": "0",
+          "transform": { "scale": [2.0, 2.0], "translation": [0.0, 0.0] }
+        }
       ]
     },
     "proj:code": "EPSG:32633",
