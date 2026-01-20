@@ -24,7 +24,7 @@
                     "derived_from": "0/data",
                     "transform": {
                         "scale": [2.0, 2.0],
-                        "translation": [0.5, 0.5]
+                        "translation": [0.0, 0.0]
                     },
                     "resampling_method": "average"
                 },
@@ -33,7 +33,7 @@
                     "derived_from": "1/data",
                     "transform": {
                         "scale": [2.0, 2.0],
-                        "translation": [0.5, 0.5]
+                        "translation": [0.0, 0.0]
                     },
                     "resampling_method": "average"
                 }
