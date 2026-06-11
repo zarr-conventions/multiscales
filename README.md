@@ -203,7 +203,7 @@ For general-purpose transformations, the `transform` object MAY contain:
 
 Absolute positioning information, such as geospatial coordinates, should be placed at the layout entry level, NOT inside the `transform` object. This makes it clear that these parameters describe the absolute position of the level, not the relative transformation between levels.
 
-When combined with the `spatial:` convention, layout entries MAY include:
+When combined with the `spatial` convention, layout entries MAY include:
 
 |                       | Type       | Description                                                                               | Required |
 | --------------------- | ---------- | ----------------------------------------------------------------------------------------- | -------- |
@@ -314,7 +314,7 @@ This generic multiscales specification is designed to be composed with domain-sp
 
 ### Geospatial Data
 
-For geospatial data, combine with `proj:*` attributes from the [`geo-proj` convention](https://github.com/zarr-conventions/geo-proj) for CRS information and `spatial:*` attributes from the [`spatial` convention](https://github.com/zarr-conventions/spatial) for coordinate transformation:
+For geospatial data, combine with `proj:*` attributes from the [`proj` convention](https://github.com/zarr-conventions/proj) for CRS information and `spatial:*` attributes from the [`spatial` convention](https://github.com/zarr-conventions/spatial) for coordinate transformation:
 
 ```json
 {
@@ -330,17 +330,17 @@ For geospatial data, combine with `proj:*` attributes from the [`geo-proj` conve
         "description": "Multiscale layout of zarr datasets"
       },
       {
-        "schema_url": "https://raw.githubusercontent.com/zarr-experimental/geo-proj/refs/tags/v1/schema.json",
-        "spec_url": "https://github.com/zarr-experimental/geo-proj/blob/v1/README.md",
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/proj/refs/tags/v1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/proj/blob/v1/README.md",
         "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
-        "name": "proj:",
+        "name": "proj",
         "description": "Coordinate reference system information for geospatial data"
       },
       {
         "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json",
         "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
         "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
-        "name": "spatial:",
+        "name": "spatial",
         "description": "Spatial coordinate information"
       }
     ],
