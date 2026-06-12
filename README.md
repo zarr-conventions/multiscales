@@ -2,9 +2,9 @@
 
 - **UUID**: d35379db-88df-4056-af3a-620245f8e347
 - **Name**: multiscales
-- **Schema URL**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json"
-- **Spec URL**: "https://github.com/zarr-conventions/multiscales/blob/v1/README.md"
-- **Extension Maturity Classification**: Proposal
+- **Schema URL**: "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1/schema.json"
+- **Spec URL**: "https://github.com/zarr-conventions/multiscales/blob/v0.1/README.md"
+- **Extension Maturity Classification**: Pilot
 - **Owner**: @emmanuelmathot, @maxrjones, @d-v-b
 
 
@@ -323,22 +323,22 @@ For geospatial data, combine with `proj:*` attributes from the [`proj` conventio
   "attributes": {
     "zarr_conventions": [
       {
-        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v1/schema.json",
-        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v1/README.md",
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/multiscales/refs/tags/v0.1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/multiscales/blob/v0.1/README.md",
         "uuid": "d35379db-88df-4056-af3a-620245f8e347",
         "name": "multiscales",
         "description": "Multiscale layout of zarr datasets"
       },
       {
-        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/proj/refs/tags/v1/schema.json",
-        "spec_url": "https://github.com/zarr-conventions/proj/blob/v1/README.md",
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/proj/refs/tags/v0.1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/proj/blob/v0.1/README.md",
         "uuid": "f17cb550-5864-4468-aeb7-f3180cfb622f",
         "name": "proj",
         "description": "Coordinate reference system information for geospatial data"
       },
       {
-        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v1/schema.json",
-        "spec_url": "https://github.com/zarr-conventions/spatial/blob/v1/README.md",
+        "schema_url": "https://raw.githubusercontent.com/zarr-conventions/spatial/refs/tags/v0.1/schema.json",
+        "spec_url": "https://github.com/zarr-conventions/spatial/blob/v0.1/README.md",
         "uuid": "689b58e2-cf7b-45e0-9fff-9cfc0883d6b4",
         "name": "spatial",
         "description": "Spatial coordinate information"
@@ -366,17 +366,20 @@ For bioimaging, spatial metadata can be integrated directly at each level follow
 
 ## Versioning and Compatibility
 
-This specification uses semantic versioning (SemVer) for version management:
+This convention is identified by its permanent UUID (`d35379db-88df-4056-af3a-620245f8e347`). The UUID MUST NOT change across versions; a different UUID denotes a different convention, not a new version.
 
-- **Major version** changes indicate backward-incompatible changes to the attribute schema
-- **Minor version** changes add new optional fields while maintaining backward compatibility
-- **Patch version** changes fix documentation, clarify behavior, or make other non-breaking updates
+The convention is versioned in this repository and tagged according to its maturity in the [Zarr Conventions Framework](https://github.com/zarr-conventions/.github/blob/main/profile/README.md), following the proposed GeoZarr versioning policy ([geozarr-spec#139](https://github.com/zarr-developers/geozarr-spec/pull/139)). The current `v0.x` releases are pre-stable: **breaking changes should be expected until the first stable release, `v1`.** We anticipate releasing `v1` before the end of 2026.
+
+A specific version is expressed by the tag in this convention's `schema_url` and `spec_url` (for example, `v0.1`); the convention does not define a separate `version` attribute. Whether versions after `v1` follow Semantic Versioning, integer versions, or another scheme is deferred (see [geozarr-spec#102](https://github.com/zarr-developers/geozarr-spec/issues/102) and [zarr-conventions-spec#29](https://github.com/zarr-conventions/zarr-conventions-spec/issues/29)) and is not prescribed here.
+
+There is no stable alternative for describing multiscale (resolution-level) pyramids in Zarr, so we encourage you to try this convention now; early adoption and implementation feedback are what move it toward a stable `v1`.
 
 ### Compatibility Guarantees
 
-- Parsers MUST support all fields defined in their major version
-- Parsers SHOULD gracefully handle unknown optional fields from newer minor versions
-- Producers SHOULD include the `version` field to indicate specification compliance level
+Per the Zarr Conventions Framework, this convention is safely ignorable: it changes only how data is *interpreted*, never how it is encoded or stored.
+
+- An implementation that does not recognize this convention (by UUID or schema URL), or that encounters a newer version of it, MUST still be able to read the underlying Zarr arrays correctly.
+- Implementations SHOULD gracefully handle unknown optional fields rather than failing, so that additive changes do not break existing readers.
 
 ## Implementation Notes
 

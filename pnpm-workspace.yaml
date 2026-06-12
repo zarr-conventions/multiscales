@@ -1,0 +1,3 @@
+# Supply-chain safety: only install dependency versions published at least
+# 7 days ago (10080 minutes), giving time for compromised releases to be caught.
+minimumReleaseAge: 10080
