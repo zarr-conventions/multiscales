@@ -199,6 +199,8 @@ For general-purpose transformations, the `transform` object MAY contain:
 }
 ```
 
+The values are relative to the level named in `derived_from`, not to the full-resolution level. In a chain where each level is derived from the previous one at half the resolution, every level has the same `scale` (for example `[2.0, 2.0]`). See [array-based-pyramid.json](examples/array-based-pyramid.json).
+
 #### Absolute Positioning (outside `transform` object)
 
 Absolute positioning information, such as geospatial coordinates, should be placed at the layout entry level, NOT inside the `transform` object. This makes it clear that these parameters describe the absolute position of the level, not the relative transformation between levels.
